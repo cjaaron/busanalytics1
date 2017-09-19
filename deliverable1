@@ -1,21 +1,91 @@
-Questions to answer:
-1. What is MLS’ data problem? What is the final managerial objective?
+What is MLS’ data problem? What is the final managerial objective?
 
-MLS, or America's Real Estate
+MLS, or Multiple Listing Service, is a database of housing information for real estate agents across the United States. While there is a plethora of information available regarding houses sold across the country provided by MLS, there exists no formula to predict the closing prices of houses based on collected variables. In this case, a local Vermont real estate firm is aiming to model closed prices for houses which could provide a few benefits for the managerial team, and more importantly, serve as a key marketing tool for acquiring new customers. By accurately predicting closed prices of houses, the firm will be able to provide customers with reliable pricing estimations, allowing them to more properly assess the true value of their own home. This means that when selling their homes, customers will not lose out on potential value. Further, the customers will trust the real estate company more. This increased trust can help the firm maintain loyal customers, as well as attract friends of the loyal customers who have heard that the real estate firm is reliable. This effect will also happen when a customer decides to purchase a new home. They will have a more realistic estimate of what the house that they’re considering actually costs, again allowing them to save money and strengthen their trust in the firm. Ultimately, a reliable formula will lead to high customer loyalty and increased referrals.
 
-2. Describe the measurement types of each variable
+Furthermore, in creating a model that effectively predicts closing prices, real estate firms can streamline the process by which they set asking prices. Currently, real estate firms determine asking prices by conducting research into similar properties and by using real estate agents’ instinct to determine how much buyers will pay for houses. This process is inefficient, because ultimately selling prices are determined by buyers, and setting an unrealistic asking price results in drawn-out sales. In addition, pricing a home accurately and therefore achieving quicker sales means that the firm might experience higher earnings, because homes that sell more quickly tend to sell closer to the asking price. Without a way to accurately predict closing prices, real estate firms waste valuable time and resources experimenting with different asking prices until they find buyers. 
 
+Describe the measurement types of each variable.
 
-3. Create a table summarizing the range or variation in each variable. Add statistics (mean,
-median, standard deviation, etc.) as you deem necessary.
+To gain a baseline understanding of the data frame and associated variables, we examined the structure of the database. We found that the data frame includes integer, numeric, and character measurement types. 
 
+str(train)
 
-train <- read_csv("~/Library/Mobile Documents/com~apple~CloudDocs/2017 Fall/Business Analytics/Project 1/train.csv")
-View(train)
+To develop a deeper understanding of the measurement types of each variable, we went through variable by variable to see how each one was formatted and the meaning of each variable in the context of the real estate market. 
+
+ID Nominal, 
+Bedrooms_total Interval 
+Baths_total Interval 
+Acres Ratio
+Sq_ft_tot_ Ratio
+Tax_gross_amount Ratio
+Assesment_value_town Ratio
+Garage_capacity Ratio
+Address -- Nominal
+City Nominal
+Garage_type -- Nominal 
+Year_built -- Interval 
+Total_stories -- Interval 
+Surveyed -- Boolean
+Seasonal -- Boolean
+Water_body_type -- Nominal
+Water_frontage_length -- Ratio
+Short_sale -- Boolean
+Rooms_total -- Ratio
+Garage -- Boolean
+Flood_zone -- Boolean
+Easements -- Boolean
+Current_use -- Boolean
+Covenants -- Boolean
+Common_land_acres -- Ratio
+Basement_access_type -- Nominal
+Basement --  Boolean
+Price_closed -- Ratio
+
+Create a table summarizing the range or variation in each variable. Add statistics (mean, median, standard deviation, etc.) as you deem necessary.
+
 summary(train)
+length(trains$id) →  to tell us how many observations are in our dataset
 
-4. How do you handle missing data in this dataset?
-5. Provide histograms/density plots for key variables, such as closed price
-6. Create bivariate frequency distributions (tables or plots) for key variables
-7. Discuss what the data patterns indicate, and what this could mean for the managers at
-MLS?
+sd() of all ratio/interval variables
+
+train$town_amount_error = train$assessment_value_town - train$price_closed → This shows us the difference between the town estimate and what the closing price was. If the number is negative, the town under estimated the price, and if it is positive, the town over estimated. Using summary(train$town_amount_error) , we could see the average error, as well as the highest and lowest estimation errors from the town. 
+
+
+
+		 			
+
+				
+How do you handle missing data in this dataset?				 	
+Go to other public websites 
+When only one or two data points are missing, use average when necessary or delete it 
+Question: can you ask R to ignore a data point in a function? 
+
+> train[128, 4] = 4.79
+> View(train)
+With data found on Trulia.com 
+
+train[58,4] = .54
+
+
+Provide histograms/density plots for key variables, such as closed price
+			
+boxplot(train$price_closed~train$city) → to see if the values of homes in one city are, on average, more than the values of homes in another city. 			 							
+Create bivariate frequency distributions (tables or plots) for key variables	
+
+Ranges of years vs. price levels 
+Boxplot for garages
+cor() 
+cor(train$sq_ft_tot_fn,train$price_closed)
+cor(train$bedrooms_total,train$price_closed)
+cor(train$baths_total,train$price_closed)
+
+question : adding new row with correlation to price
+					 							
+Discuss what the data patterns indicate, and what this could mean for the managers at MLS? 						
+					 				
+			
+		
+
+Little to no correlation between age of house and price 
+Positive correlation between square feet and price 
+
