@@ -91,4 +91,10 @@ Positive correlation between square feet and price
 
 # LEVELS CODE
 
-train$Year.Level = "0"
+> train$Year.Level = "0"
+> train[train$year_built <= 1900,]$Year.Level = "Level 1 Year"
+> 
+> train[train$year_built>1900 & train$year_built <= 1950 ,]$Year.Level= "Level 2 Year"
+> train[train$year_built>1950 & train$year_built <=2000 , ]$Year.Level = "Level 3 Year"
+> train[train$year_built>2000 , ]$Year.Level = "Level 4 Year"
+> table(train$city, train$Year.Level)
