@@ -89,3 +89,6 @@ Discuss what the data patterns indicate, and what this could mean for the manage
 Little to no correlation between age of house and price 
 Positive correlation between square feet and price 
 
+# LEVELS CODE
+
+train$Year.Level = "0"
