@@ -26,7 +26,6 @@ plot(train$acres, train$price_closed, main = "Scatter Plot acres vs. Price", yla
 
 ### Although we thought that the year houses were built would have an impact on the closing prices, we found in our first deliverable that there is little correlation between the age of houses and their closing prices. We found that town assesment value was fairly similar to closing price, suggesting it may be an appropriate explanatory variable. We also found that there is a positive correlation between square feet and price, total bedrooms and closing price, total bathrooms and closing price, and acres and closing price. 
 
-
 ### 6. Determine whether the presence of garage and/or basement affects the assessment
 value and closing price for the property. Clearly state the dependent and independent
 variables used in your regression analysis. Interpret the findings of this analysis, and
@@ -53,7 +52,9 @@ summary(GarageVsClosingPrice)
 ### The independent variable is the presence of the garage, and the dependent variable is closing price. The coefficient is 292397, meaning that a house with a garage has a closing price $292397 higher than one without a basement, not considering the other variables. The p-value is 0.0333, meaning this coefficient is significant. Therefore, we reject the null hypothesis that the presence of a garage does not affect the closing price of a house. The r-squared is .03311, which is the amount of variation in closing price that can be accounted for by presence of a garage. 
 
 
-CLEAN DATA
+###OTHER RELEVANT CODE TO PUT IN RMARKDOWN
+
+###CLEAN DATA
 
 ### we should run this for acres before we do all analysis:
 
@@ -64,3 +65,10 @@ train[58, 4] = .54
 
 nameNewDataFrame = subset(train, train$id!= _______) ... insert rows you want to omit from new dataframe
 Clean_Garage_Cap = subset(train, train$id!= 128)
+
+###DIFFERENCE BETWEEN TOWN ESTIMATE AND CLOSING PRICE
+
+Closing_v_Estimate = subset(train, select=c("id", "assessment_value_town", "price_closed"))
+Closing_v_Estimate$difference = Closing_v_Estimate$assessment_value_town - Closing_v_Estimate$price_closed
+
+### there are 6 estimates that are over $1,000,000 off and over 50 estimates that are over $100,000 off. 
