@@ -1,1 +1,58 @@
+## HI, I was trying to figure out how to omit just row 128 in a new dataframe, as garage capacity is missing there, 
+## but I couldn't figure it out! I will keep working on it tomorrow. I think I'm just tired. For now, the most important thing
+## is that we all use a dataframe with acres filled out right. Here is what it should be:
 
+Train_Data[128,4] = 4.79
+Train_Data[58, 4] = .54
+
+-----
+
+library(readr)
+> Train_Data <- read_csv("~/Downloads/Train Data.csv")
+Parsed with column specification:
+cols(
+  .default = col_character(),
+  id = col_integer(),
+  bedrooms_total = col_integer(),
+  baths_total = col_integer(),
+  acres = col_double(),
+  sq_ft_tot_fn = col_integer(),
+  tax_gross_amount = col_integer(),
+  assessment_value_town = col_integer(),
+  garage_capacity = col_integer(),
+  year_built = col_integer(),
+  total_stories = col_double(),
+  water_frontage_length = col_number(),
+  rooms_total = col_integer(),
+  price_closed = col_integer()
+)
+See spec(...) for full column specifications.
+> View(Train_Data)
+> train[128,4] = 4.79
+Error in train[128, 4] = 4.79 : object 'train' not found
+> Train_Data[128,4] = 4.79
+> View(Train_Data)
+> Clean_train = omit.na(Train_Data$garage_capacity)
+Error in omit.na(Train_Data$garage_capacity) : 
+  could not find function "omit.na"
+> complete.cases(Train_Data$garage_capacity)
+  [1]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+ [21]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+ [41]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+ [61]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+ [81]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+[101]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+[121]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+> garage_capacity_clean = Train_Data$garage_capacity[complete.cases(Train_Data$garage_capacity)]
+> str(garage_capacity_clean)
+ int [1:136] 2 2 1 2 2 4 0 1 0 1 ...
+> ?omit.na
+No documentation for ‘omit.na’ in specified packages and libraries:
+you could try ‘??omit.na’
+> ?na.omit
+> TrainClean = na.omit(Train_Data$id[128])
+> TrainClean = Train_Data
+> View(TrainClean)
+> na.omit(TrainClean$id[128])
+[1] 128
+> 
