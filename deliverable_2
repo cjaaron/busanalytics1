@@ -51,6 +51,20 @@ summary(GarageVsClosingPrice)
 
 ### The independent variable is the presence of the garage, and the dependent variable is closing price. The coefficient is 292397, meaning that a house with a garage has a closing price $292397 higher than one without a basement, not considering the other variables. The p-value is 0.0333, meaning this coefficient is significant. Therefore, we reject the null hypothesis that the presence of a garage does not affect the closing price of a house. The r-squared is .03311, which is the amount of variation in closing price that can be accounted for by presence of a garage. 
 
+5. Compare the mean assessment price and closing prices by the presence of garage or basement in the property. Clearly mention the type of two-sample t-test you would be using, the null and alternate hypotheses for these tests. Interpret the results of these t- tests.
+
+```{r}
+Closing_v_Estimate = subset(train, select=c("id", "assessment_value_town", "price_closed"))
+Closing_v_Estimate$isGarage = train$garage
+Closing_v_Estimate$isBasement = train$basement
+summary(Closing_v_Estimate)
+
+ttestdata = Closing_v_Estimate[complete.cases(Closing_v_Estimate), ]
+summary(ttestdata)
+```
+
+Before we were able to conduct analysis, we created a new dataset that ommitted any rows with missing data (NAs). There were 10 rows with missing data. To ensure that ommitting the data did not impact the data in a drastic way, we compared the summary statistics between the two data sets. The median values of both the assessment values and the closing prices remained the same. The mean assessment value increased by 0.76% and the mean closing price decreased by 0.49% -- neighther change great enough to raise red flags about impacting ttest results. 
+
 
 ###OTHER RELEVANT CODE TO PUT IN RMARKDOWN
 
