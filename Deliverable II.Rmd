@@ -1,0 +1,60 @@
+---
+title: "Deliverable II"
+author: "Charlotte Aaron, Eva Spitzen, & Saul Cohen"
+date: "11/10/2017"
+output: pdf_document
+---
+
+# Addressing Missing Data
+
+### Acres
+
+```{r}
+train[128, 4] = 4.79
+train[58, 4] = .54
+```
+
+### Garage Capacity
+If we use this variable, omit ID 128. 
+
+```{r}
+Clean_Garage_Cap = subset(train, train$id!= 128)
+```
+
+# 5. Compare the mean assessment price and closing prices by the presence of garage or basement in the property. Clearly mention the type of two-sample t-test you would be using, the null and alternate hypotheses for these tests. Interpret the results of these t- tests.
+
+```{r}
+Closing_v_Estimate = subset(train, select=c("id", "assessment_value_town", "price_closed"))
+Closing_v_Estimate$isGarage = train$garage
+Closing_v_Estimate$isBasement = train$basement
+summary(Closing_v_Estimate)
+
+ttestdata = Closing_v_Estimate[complete.cases(Closing_v_Estimate), ]
+summary(ttestdata)
+```
+
+Before we were able to conduct analysis, we created a new dataset that ommitted any rows with missing data (NAs). There were 10 rows with missing data. To ensure that ommitting the data did not impact the data in a drastic way, we compared the summary statistics between the two data sets. The median values of both the assessment values and the closing prices remained the same. The mean assessment value increased by 0.76% and the mean closing price decreased by 0.49% -- neighther change great enough to raise red flags about impacting ttest results. 
+
+```{r}
+t.test(ttestdata[ttestdata$isGarage == "Yes",]$price_closed, ttestdata[ttestdata$isGarage == "No",]$price_closed)
+```
+
+We ran an Independent Samples t-test because we are comparing the same variable, closing price, between two sub-samples, houses with garages and houses without garages. Our null hypothesis was that there is no difference in closing prices between houses with garages and houses without garages. The results of our t-test show that we can reject our null hypothesis and state that, with more than 99% confidence, the alternative hypothesis, which says the difference in average closing price between houses with and without garages is not 0, is true (p<.001). This means there is most likely a significant difference between the closing prices of houses with and without garages, with the mean of houses with garages being significantly more than the mean of houses without garages. 
+
+```{r}
+t.test(ttestdata[ttestdata$isBasement == "Yes",]$price_closed, ttestdata[ttestdata$isBasement == "No",]$price_closed)
+```
+
+To test whether or not houses with basements had significantly higher closing prices than houses without basements, we ran another Independent Samples t-test. Our null hypothesis was that there is no difference in closing price between houses with and without basements. The results of our t-test show that we cannot reject the null with 95% confidence, meaning there is no significant difference between the closing price of houses with and without basements (p>.05).
+
+```{r}
+t.test(ttestdata[ttestdata$isGarage == "Yes",]$assessment_value_town, ttestdata[ttestdata$isGarage == "No",]$assessment_value_town)
+```
+
+Just as there was a significant difference in the closing price between houses with and without garages, there is a significant difference in town assessment value between houses with and without garages. To determine this, we ran an Indepenent Samples t-test for which our null hypothesis was that there is no significant difference assessment value between houses with and without garages. The results of our t-test show that we can reject the null and accept the alternative hypothesis, which states that the difference in average assessment values between houses with and without garages is not zero, with 95% confidence (p<.05). This means in terms of the real estate business that the town does take the presence of garages into account when determining the assessment value of houses and values houses with garages significantly higher, on average, than houses without garages. 
+
+```{r}
+t.test(ttestdata[ttestdata$isBasement == "Yes",]$assessment_value_town, ttestdata[ttestdata$isBasement == "No",]$assessment_value_town)
+```
+
+Last, we checked to see if there exists a significant difference in the town assessment values of houses with and without basements. We used an Independent Samples t-test for which our null hypothesis was that there is no significant difference between the assessment values. The t-test showed that we are not able to reject the null with 95% confidence, meaning town assessers of house values most likely do not take the existance of a basement into account when coming outt with the value of the house (p>.05).
