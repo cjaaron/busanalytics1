@@ -24,35 +24,16 @@ train = read_csv("~/Library/Mobile Documents/com~apple~CloudDocs/2017 Fall/Busin
 
 To develop a deeper understanding of the measurement types of each variable, we used the code str(train) to go through variable by variable to see how each one was formatted and the meaning of each variable in the context of the real estate market.
 
-* Variable Measurement Types
-+ ID, Nominal 
-+ Bedrooms_total, Interval 
-+ Baths_total, Interval 
-+ Acres, Ratio 
-+ Sq_ft_tot_, Ratio 
-+ Tax_gross_amount, Ratio 
-+ Assesment_value_town, Ratio 
-+ Garage_capacity, Ratio 
-+ Address, Nominal 
-+ City, Nominal 
-+ Garage_type, Nominal 
-+ Year_built, Interval 
-+ Total_stories, Interval 
-+ Surveyed, Boolean 
-+ Seasonal, Boolean 
-+ Water_body_type, Nominal 
-+ Water_frontage_length, Ratio 
-+ Short_sale, Boolean 
-+ Rooms_total, Ratio 
-+ Garage, Boolean 
-+ Flood_zone, Boolean 
-+ Easements, Boolean 
-+ Current_use, Boolean 
-+ Covenants, Boolean 
-+ Common_land_acres, Ratio 
-+ Basement_access_type, Nominal 
-+ Basement, Boolean 
-+ Price_closed, Ratio
+*Variable Measurement Types*
+
+  + Nominal
+    - ID, Address, City, Garage_type, Water_body_type, Basement_access_type
+  + Interval
+    - Bedrooms_total, Baths_total, Total_stories
+  + Ratio
+    - Acres, Sq_ft_tot_, Tax_gross_amount, Garage_capacity, Water_frontage_length, Rooms_total, Common_land_acres, Price_closed
+  + Boolean
+    - Surveyed, Seasonal, Short_sale, Garage, Clood_zone, Easements, Current_use, Covenants, Basement
 
 **3. How do you handle missing data in this dataset? Clearly mention if you are using data imputation techniques (if so, which one) or dropping observations (in this case, mention how many observations). For whichever technique you choose, provide brief summary statistics for your data before and after handling missing data.**
 
