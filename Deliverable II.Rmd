@@ -7,25 +7,24 @@ output: pdf_document
 The URL for our team GitHub repository: https://github.com/cjaaron/busanalytics1.git 
 The URL for the Kaggle dataset: https://www.kaggle.com/paulina7/notebook535f98bf8e/data
 
-### 1. What is MLS’ data problem? What is the final managerial objective?
+**1. What is MLS’ data problem? What is the final managerial objective?**
 
 MLS, or Multiple Listing Service, is a database of housing information for real estate agents across the United States. While there is a plethora of information available regarding houses sold across the country provided by MLS, no formula exists to predict the closing prices of houses based on collected variables. In this case, a local Vermont real estate firm is aiming to model closed prices for houses which could provide a few benefits for the managerial team and comfort for both buyers and sellers in that they know the information they get from their real estate agent is based on data, increasing the customer’s trust in the firm.
 
 In creating a model that predicts closing prices, real estate firms can streamline the process by which they set asking prices. Currently, real estate firms determine asking prices by conducting research into similar properties and using real estate agents’ instinct to determine how much buyers will pay for houses. This process is inefficient, because ultimately selling prices are determined by buyers, and setting an unrealistic asking price results in drawn-out sales. In addition, pricing a home accurately and therefore achieving quicker sales means that the firm will experience higher earnings, because homes that sell more quickly tend to sell closer to the asking price. Without a way to accurately predict closing prices, real estate firms waste valuable time and resources experimenting with different asking prices until they find buyers.
 
-### 2. Describe the measurement types of each variable
+**2. Describe the measurement types of each variable**
 
 To gain a baseline understanding of the data frame and associated variables, we examined the structure of the database. We found that the data frame includes integer, numeric, and character measurement types.
 
 ```{r}
 library(readr)
 train = read_csv("~/Library/Mobile Documents/com~apple~CloudDocs/2017 Fall/Business Analytics/Project 1/train.csv")
-str(train)
 ```
 
-To develop a deeper understanding of the measurement types of each variable, we went through variable by variable to see how each one was formatted and the meaning of each variable in the context of the real estate market.
+To develop a deeper understanding of the measurement types of each variable, we used the code str(train) to go through variable by variable to see how each one was formatted and the meaning of each variable in the context of the real estate market.
 
-Variable Measurement Types
+* Variable Measurement Types
 + ID, Nominal 
 + Bedrooms_total, Interval 
 + Baths_total, Interval 
@@ -55,11 +54,11 @@ Variable Measurement Types
 + Basement, Boolean 
 + Price_closed, Ratio
 
-### 3. How do you handle missing data in this dataset? Clearly mention if you are using data imputation techniques (if so, which one) or dropping observations (in this case, mention how many observations). For whichever technique you choose, provide brief summary statistics for your data before and after handling missing data.
+**3. How do you handle missing data in this dataset? Clearly mention if you are using data imputation techniques (if so, which one) or dropping observations (in this case, mention how many observations). For whichever technique you choose, provide brief summary statistics for your data before and after handling missing data.**
 
 While there were many variables with missing data, we only address those that proved to be relevant to our report below. 
 
-*Acres
+*Acres*
 
 There was only one missing datapoint for acres, as well as one datapoint where acres was listed as '0 acres,' which we know is not possible. To address this, we conducted research online and filled in the missing data using acre information from Trulia.com and Zillow. 
 
@@ -68,12 +67,13 @@ train[128, 4] = 4.79
 train[58, 4] = .54
 ```
 
-*Town Assessment Value, Closing Price, Basement, and Garage
+*Town Assessment Value, Closing Price, Basement, and Garage*
+
 : the code used to clean this data can be found under question 5
 
 These variables are used together later in this report to compare the mean assessment price and closing prices by the presence of garage or basement in the property and to determine whether the presence of garage and/or basement affects the assessment value and closing price for the property; however, the basement variable had 3 missing data points, and the town assessment value variable had 8 missing data points, with one row of data missing from both assessment value and basement. To address this missing data, we created a new data frame with only complete cases, resulting in the loss of 10 rows of data. To ensure that ommitting the data did not impact the data in a drastic way, we compared the summary statistics between the two data sets. The median values of both the assessment values and the closing prices remained the same. The mean assessment value increased by 0.76% and the mean closing price decreased by 0.49% -- neither change great enough to raise red flags about impacting ttest results. 
 
-*Garage Capacity
+*Garage Capacity*
 
 There is only one missing data point in the variable for garage capacity. To address this, we simply omitted it when we tested for its impact on closing price in the regression. To ensure the omission did not impact the data, we checked the summary statistcs of garage capacity before and after the omission -- there was no difference. 
 
@@ -83,18 +83,18 @@ Clean_Garage_Cap = subset(train, train$id!= 128)
 summary(Clean_Garage_Cap$garage_capacity)
 ```
 
-* Garage Type, Short Sale
+*Garage Type, Short Sale*
 
-Missing data points for garage type variable allign with "No" in the Garage variable, meaning we can change all the missing data in this variable to "No" rather than leaving it is "NA," or missing data. For the short sale variable, a majority of the data is no, and we believe it is safe to assume the missing data means "Yes," and "Yes" is not represented at all in the variable. 
+Missing data points for garage type variable allign with "No" in the Garage variable, meaning we can change all the missing data in this variable to "No" rather than leaving it is "NA," or missing data. For the short sale variable, a majority of the data is no, and we believe it is safe to assume the missing data means "Yes," as "Yes" is not represented at all in the variable. 
 
 ```{r}
 train$garage_type[is.na(train$garage_type)] = "No"
 train$short_sale[is.na(train$short_sale)] = "Yes"
 ```
 
-# 4. Provide a brief summary of takeaways from Interim Deliverable-I. These could include key summary statistics tables or plots.
+**4. Provide a brief summary of takeaways from Interim Deliverable-I. These could include key summary statistics tables or plots.**
 
-####The major takeaways from Interim Deliverable I were as follows:
+The major takeaways from Interim Deliverable I were as follows:
 
 While closing price and assesment value follow the same general trends, closing price is higher. This plot shows overlaying denstiy plots for assesment value and closing price. We see that while closing price is generally higher than assesment value, the two are fairly similar. This suggests town assesment value is a reasonable predictor of closing price, but does tend to understimate prices. 
 ```{r}
@@ -127,7 +127,7 @@ We also concluded that there does not appear to be correlation between closing p
 plot(train$year_built , train$price_closed , main = "Scatter Plot of Year vs. Price" , ylab = "Closing Price ($)" , xlab = "Year")
 ```
 
-# 5. Compare the mean assessment price and closing prices by the presence of garage or basement in the property. Clearly mention the type of two-sample t-test you would be using, the null and alternate hypotheses for these tests. Interpret the results of these t- tests.
+**5. Compare the mean assessment price and closing prices by the presence of garage or basement in the property. Clearly mention the type of two-sample t-test you would be using, the null and alternate hypotheses for these tests. Interpret the results of these t- tests.**
 
 ```{r}
 Closing_v_Estimate = subset(train, select=c("id", "assessment_value_town", "price_closed"))
@@ -159,7 +159,7 @@ t.test(Clean_Data[Clean_Data$basement == "Yes",]$assessment_value_town, Clean_Da
 ```
 Last, we checked to see if there exists a significant difference in the town assessment values of houses with and without basements. We used an Independent Samples t-test for which our null hypothesis was that there is no significant difference between the assessment values. The t-test showed that we are not able to reject the null with 95% confidence, meaning town assessers of house values most likely do not take the existance of a basement into account when coming outt with the value of the house (p>.05).
 
-# 6. Determine whether the presence of garage and/or basement affects the assessment value and closing price for the property. Clearly state the dependent and independent variables used in your regression analysis. Interpret the findings of this analysis, and note the R-squared.
+**6. Determine whether the presence of garage and/or basement affects the assessment value and closing price for the property. Clearly state the dependent and independent variables used in your regression analysis. Interpret the findings of this analysis, and note the R-squared.**
 
 ```{r}
 BasementVsAssessmentValue = lm(formula = assessment_value_town~factor(basement), data = Clean_Data)
@@ -199,5 +199,5 @@ This code regresses garage and basement against closing price. The independent v
 
 From these regressions, we concluded that the garage does seem to have predictive power over the assessment value and closing price of houses, while basement does not. Interacting the two variables does not affect these conclusions.
 
-# 7. You may extend this analysis by further controlling for omitted variable biases. Mention which variables you are using as controls, and re-do the regression from part (6) after adding these controls. Interpret your findings and note the change in R-squared. [Hint: For this part, you may use the “train” and “validate” datasets, and comment on which regression model provides the best fit. Alternatively, you may use any of likelihood or Information Criterion techniques discussed in class.]
+**7. You may extend this analysis by further controlling for omitted variable biases. Mention which variables you are using as controls, and re-do the regression from part (6) after adding these controls. Interpret your findings and note the change in R-squared. [Hint: For this part, you may use the “train” and “validate” datasets, and comment on which regression model provides the best fit. Alternatively, you may use any of likelihood or Information Criterion techniques discussed in class.]**
 
