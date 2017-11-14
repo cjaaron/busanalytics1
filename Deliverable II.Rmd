@@ -71,6 +71,43 @@ Clean_Garage_Cap = subset(train, train$id!= 128)
 
 ### 4. Provide a brief summary of takeaways from Interim Deliverable-I. These could include key summary statistics tables or plots.
 
+The major takeaways from Interim Deliverable I were as follows:
+
+While closing price and assesment value follow the same general trends, closing price is higher. This plot shows overlaying denstiy plots for assesment value and closing price. We see that while closing price is generally higher than assesment value, the two are fairly similar. This suggests town assesment value is a reasonable predictor of closing price, but does tend to understimate prices. 
+
+```{r}
+plot(density(na.exclude(train$price_closed)))
+lines(density(na.exclude(train$assessment_value_town)))
+```
+
+Total square feet and closing price are positively correlated. This shows us a scatter plot of square feet plotted against closing price. 
+```{r}
+plot(train$sq_ft_tot_fn, train$price_closed, main = "Scatter Plot of Square Feet vs. Price", ylab = "Closing Price ($),", xlab = "Square Feet (#)")  plot(train$sq_ft_tot_fn, train$price_closed, main = "Scatter Plot of Square Feet vs. Price", ylab = "Closing Price ($),", xlab = "Square Feet (#)") 
+```
+
+Total bedrooms and closing price are positively correlated. This shows us a scatter plot of total bedrooms versus closing price. 
+
+```{r}
+plot(train$rooms_total, train$price_closed, main = "Scatter Plot of Square Feet vs. Price", ylab = "Closing Price ($),", xlab = "Total bedrooms (#)") 
+```
+
+Total bathrooms and closing price are positively correlated. This shows us a scatter plot of total bathrooms versus closing price. 
+
+```{r}
+plot(train$baths_total, train$price_closed, main = "Scatter Plot of # of bathrooms vs. Price", ylab = "Closing Price ($),", xlab = "Bathrooms (#)") 
+```
+
+Acres and closing price are positively correlated. This shows us a scatter plot of acres versus closing price. We have adjusted the scale of the x-axis to better see the correlation.
+
+```{r}
+plot(train$acres, train$price_closed, main = "Scatter Plot acres vs. Price", ylab = "Closing Price ($),", xlab = "Acres", xlim = c(0, 350)) 
+```
+
+We also concluded that there does not appear to be correlation between closing price and year built, as shown by the following scatterplot.
+
+```{r}
+plot(train$year_built , train$price_closed , main = "Scatter Plot of Year vs. Price" , ylab = "Closing Price ($)" , xlab = "Year")
+```
 
 ### 5. Compare the mean assessment price and closing prices by the presence of garage or basement in the property. Clearly mention the type of two-sample t-test you would be using, the null and alternate hypotheses for these tests. Interpret the results of these t- tests.
 
@@ -112,6 +149,34 @@ Last, we checked to see if there exists a significant difference in the town ass
 
 ### 6. Determine whether the presence of garage and/or basement affects the assessment value and closing price for the property. Clearly state the dependent and independent variables used in your regression analysis. Interpret the findings of this analysis, and note the R-squared.
 
+```{r}
+BasementVsAssessmentValue = lm(formula = assessment_value_town~factor(basement), data = train)
+summary(BasementVsAssessmentValue)
+```
+
+This code regresses basement against assessment value. The independent variable is the presence of the basement, and the dependent variable is assessment value. The coefficient is 169426, meaning that a house with a basement has an assesment value $169236 higher than one without a basement, not considering the other variables. However, the the p-value is 0.334, which means the coefficient is not significant and we cannot reject the null hypothesis that having a basement has no effect on the assessment value of the house. The r-squared is 0.007467, which is the amount of variation in closing price that can be accounted for by presence of a garage. 
+
+
+```{r}
+BasementVsClosingPrice = lm(formula = price_closed~factor(basement), data = train)
+summary(BasementVsClosingPrice)
+```
+
+This code regresses basement against closing price. The independent variable is the presence of the basement, and the dependent variable is closing price. The coefficient is 31,554, meaning that a house with a basement has an average closing price $31,554 higher than one without a basement, not considering the other variables. The p-value is 0.877582, which means the coefficient is not significant and we cannot reject the null hypothesis that having a basement has no effect on the closing price of the house. The r-squared is 0.0001804, which is the amount of variation in closing price that can be accounted for by presence of a garage. 
+
+```{r}
+GarageVsAssessmentValue = lm(formula = assessment_value_town~factor(garage), data = train)
+summary(GarageVsAssessmentValue)
+```
+
+This code regresses garage against assessment value. The independent variable is the presence of the garage, and the dependent variable is assessment value. The coefficient is 259266, meaning that a house with a garage has an assesment value $259266 higher than one without a basement, not considering the other variables. The p-value is 0.0339, meaning this coefficient is significant. Therefore, we reject the null hypothesis that the presence of a garage does not affect the assessment value of a house. The r-squared is .03495, which is the amount of variation in closing price that can be accounted for by presence of a garage. 
+
+```{r}
+GarageVsClosingPrice = lm(formula = price_closed~factor(garage), data = train)
+summary(GarageVsClosingPrice)
+```
+
+This code regresses garage against closing price. The independent variable is the presence of the garage, and the dependent variable is closing price. The coefficient is 292397, meaning that a house with a garage has a closing price $292397 higher than one without a basement, not considering the other variables. The p-value is 0.0333, meaning this coefficient is significant. Therefore, we reject the null hypothesis that the presence of a garage does not affect the closing price of a house. The r-squared is .03311, which is the amount of variation in closing price that can be accounted for by presence of a garage. 
 
 ### 7. You may extend this analysis by further controlling for omitted variable biases. Mention which variables you are using as controls, and re-do the regression from part (6) after adding these controls. Interpret your findings and note the change in R-squared. [Hint: For this part, you may use the “train” and “validate” datasets, and comment on which regression model provides the best fit. Alternatively, you may use any of likelihood or Information Criterion techniques discussed in class.]
 
