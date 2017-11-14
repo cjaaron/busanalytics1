@@ -7,36 +7,36 @@ output: pdf_document
 The URL for our team GitHub repository: https://github.com/cjaaron/busanalytics1.git 
 The URL for the Kaggle dataset: https://www.kaggle.com/paulina7/notebook535f98bf8e/data
 
-# 1. What is MLS’ data problem? What is the final managerial objective?
+## 1. What is MLS’ data problem? What is the final managerial objective?
 
 MLS, or Multiple Listing Service, is a database of housing information for real estate agents across the United States. While there is a plethora of information available regarding houses sold across the country provided by MLS, no formula exists to predict the closing prices of houses based on collected variables. In this case, a local Vermont real estate firm is aiming to model closed prices for houses which could provide a few benefits for the managerial team and comfort for both buyers and sellers in that they know the information they get from their real estate agent is based on data, increasing the customer’s trust in the firm.
 In creating a model that predicts closing prices, real estate firms can streamline the process by which they set asking prices. Currently, real estate firms determine asking prices by conducting research into similar properties and using real estate agents’ instinct to determine how much buyers will pay for houses. This process is inefficient, because ultimately selling prices are determined by buyers, and setting an unrealistic asking price results in drawn-out sales. In addition, pricing a home accurately and therefore achieving quicker sales means that the firm will experience higher earnings, because homes that sell more quickly tend to sell closer to the asking price. Without a way to accurately predict closing prices, real estate firms waste valuable time and resources experimenting with different asking prices until they find buyers.
 
-# 2. Describe the measurement types of each variable
+## 2. Describe the measurement types of each variable
 
 
-# 3. How do you handle missing data in this dataset? Clearly mention if you are using data imputation techniques (if so, which one) or dropping observations (in this case, mention how many observations). For whichever technique you choose, provide brief summary statistics for your data before and after handling missing data.
+## 3. How do you handle missing data in this dataset? Clearly mention if you are using data imputation techniques (if so, which one) or dropping observations (in this case, mention how many observations). For whichever technique you choose, provide brief summary statistics for your data before and after handling missing data.
 
-# Addressing Missing Data
+### Addressing Missing Data
 
-### Acres
+#### Acres
 
 ```{r}
 train[128, 4] = 4.79
 train[58, 4] = .54
 ```
 
-### Garage Capacity
+#### Garage Capacity
 If we use this variable, omit ID 128. 
 
 ```{r}
 Clean_Garage_Cap = subset(train, train$id!= 128)
 ```
 
-# 4. Provide a brief summary of takeaways from Interim Deliverable-I. These could include key summary statistics tables or plots.
+## 4. Provide a brief summary of takeaways from Interim Deliverable-I. These could include key summary statistics tables or plots.
 
 
-# 5. Compare the mean assessment price and closing prices by the presence of garage or basement in the property. Clearly mention the type of two-sample t-test you would be using, the null and alternate hypotheses for these tests. Interpret the results of these t- tests.
+## 5. Compare the mean assessment price and closing prices by the presence of garage or basement in the property. Clearly mention the type of two-sample t-test you would be using, the null and alternate hypotheses for these tests. Interpret the results of these t- tests.
 
 ```{r}
 Closing_v_Estimate = subset(train, select=c("id", "assessment_value_town", "price_closed"))
@@ -74,8 +74,8 @@ t.test(ttestdata[ttestdata$isBasement == "Yes",]$assessment_value_town, ttestdat
 
 Last, we checked to see if there exists a significant difference in the town assessment values of houses with and without basements. We used an Independent Samples t-test for which our null hypothesis was that there is no significant difference between the assessment values. The t-test showed that we are not able to reject the null with 95% confidence, meaning town assessers of house values most likely do not take the existance of a basement into account when coming outt with the value of the house (p>.05).
 
-# 6. Determine whether the presence of garage and/or basement affects the assessment value and closing price for the property. Clearly state the dependent and independent variables used in your regression analysis. Interpret the findings of this analysis, and note the R-squared.
+## 6. Determine whether the presence of garage and/or basement affects the assessment value and closing price for the property. Clearly state the dependent and independent variables used in your regression analysis. Interpret the findings of this analysis, and note the R-squared.
 
 
-# 7. You may extend this analysis by further controlling for omitted variable biases. Mention which variables you are using as controls, and re-do the regression from part (6) after adding these controls. Interpret your findings and note the change in R-squared. [Hint: For this part, you may use the “train” and “validate” datasets, and comment on which regression model provides the best fit. Alternatively, you may use any of likelihood or Information Criterion techniques discussed in class.]
+## 7. You may extend this analysis by further controlling for omitted variable biases. Mention which variables you are using as controls, and re-do the regression from part (6) after adding these controls. Interpret your findings and note the change in R-squared. [Hint: For this part, you may use the “train” and “validate” datasets, and comment on which regression model provides the best fit. Alternatively, you may use any of likelihood or Information Criterion techniques discussed in class.]
 
