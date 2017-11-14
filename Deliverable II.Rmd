@@ -10,6 +10,7 @@ The URL for the Kaggle dataset: https://www.kaggle.com/paulina7/notebook535f98bf
 ### 1. What is MLS’ data problem? What is the final managerial objective?
 
 MLS, or Multiple Listing Service, is a database of housing information for real estate agents across the United States. While there is a plethora of information available regarding houses sold across the country provided by MLS, no formula exists to predict the closing prices of houses based on collected variables. In this case, a local Vermont real estate firm is aiming to model closed prices for houses which could provide a few benefits for the managerial team and comfort for both buyers and sellers in that they know the information they get from their real estate agent is based on data, increasing the customer’s trust in the firm.
+
 In creating a model that predicts closing prices, real estate firms can streamline the process by which they set asking prices. Currently, real estate firms determine asking prices by conducting research into similar properties and using real estate agents’ instinct to determine how much buyers will pay for houses. This process is inefficient, because ultimately selling prices are determined by buyers, and setting an unrealistic asking price results in drawn-out sales. In addition, pricing a home accurately and therefore achieving quicker sales means that the firm will experience higher earnings, because homes that sell more quickly tend to sell closer to the asking price. Without a way to accurately predict closing prices, real estate firms waste valuable time and resources experimenting with different asking prices until they find buyers.
 
 ### 2. Describe the measurement types of each variable
@@ -23,7 +24,7 @@ str(train)
 
 To develop a deeper understanding of the measurement types of each variable, we went through variable by variable to see how each one was formatted and the meaning of each variable in the context of the real estate market.
 
-* Variable Measurement Types
+*Variable Measurement Types
 + ID, Nominal 
 + Bedrooms_total, Interval 
 + Baths_total, Interval 
@@ -55,14 +56,21 @@ To develop a deeper understanding of the measurement types of each variable, we 
 
 ### 3. How do you handle missing data in this dataset? Clearly mention if you are using data imputation techniques (if so, which one) or dropping observations (in this case, mention how many observations). For whichever technique you choose, provide brief summary statistics for your data before and after handling missing data.
 
-#### Acres
+*Acres
+
+There was only one missing datapoint for acres, as well as one datapoint where acres was listed as '0 acres,' which we know is not possible. To address this, we conducted research online and filled in the missing data using Trulia.com and Zillow. 
 
 ```{r}
 train[128, 4] = 4.79
 train[58, 4] = .54
 ```
 
-#### Garage Capacity
+*Town Assessment Value, Closing Price, Basement, and Garage
+
+These variables are used together later in this report  to compare the mean assessment price and closing prices by the presence of garage or basement in the property; however, the basement variable had 3 missing data points, and the town assessment value variable had 8 missing data points, with one row of data missing from both assessment value and basement. To address this missing data, we created a new data frame with only complete cases, resulting in the loss of 10 rows of data. To ensure that ommitting the data did not impact the data in a drastic way, we compared the summary statistics between the two data sets. The median values of both the assessment values and the closing prices remained the same. The mean assessment value increased by 0.76% and the mean closing price decreased by 0.49% -- neither change great enough to raise red flags about impacting ttest results. 
+
+*Garage Capacity
+
 If we use this variable, omit ID 128. 
 
 ```{r}
