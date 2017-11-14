@@ -98,3 +98,5 @@ Positive correlation between square feet and price
 > train[train$year_built>1950 & train$year_built <=2000 , ]$Year.Level = "Level 3 Year"
 > train[train$year_built>2000 , ]$Year.Level = "Level 4 Year"
 > table(train$city, train$Year.Level)
+
+test_lm_7=lm(data=train.3,price_closed~acres+rooms_total+sq_ft_tot_fn+garage_capacity+factor(water_body_type))
