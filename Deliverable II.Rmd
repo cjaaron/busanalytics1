@@ -104,7 +104,7 @@ lines(density(na.exclude(train$assessment_value_town)))
 
 Total square feet and closing price are positively correlated. This shows us a scatter plot of square feet plotted against closing price. 
 ```{r}
-plot(train$sq_ft_tot_fn, train$price_closed, main = "Scatter Plot of Square Feet vs. Price", ylab = "Closing Price ($),", xlab = "Square Feet (#)")  plot(train$sq_ft_tot_fn, train$price_closed, main = "Scatter Plot of Square Feet vs. Price", ylab = "Closing Price ($),", xlab = "Square Feet (#)") 
+plot(train$sq_ft_tot_fn, train$price_closed, main = "Scatter Plot of Square Feet vs. Price", ylab = "Closing Price ($)", xlab = "Square Feet (#)")
 ```
 
 Total bedrooms and closing price are positively correlated. This shows us a scatter plot of total bedrooms versus closing price. 
