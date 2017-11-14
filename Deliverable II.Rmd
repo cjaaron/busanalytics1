@@ -149,7 +149,7 @@ Last, we checked to see if there exists a significant difference in the town ass
 ### 6. Determine whether the presence of garage and/or basement affects the assessment value and closing price for the property. Clearly state the dependent and independent variables used in your regression analysis. Interpret the findings of this analysis, and note the R-squared.
 
 ```{r}
-BasementVsAssessmentValue = lm(formula = assessment_value_town~factor(basement), data = train)
+BasementVsAssessmentValue = lm(formula = assessment_value_town~factor(basement), data = Clean_Data)
 summary(BasementVsAssessmentValue)
 ```
 
@@ -157,38 +157,38 @@ This code regresses basement against assessment value. The independent variable 
 
 
 ```{r}
-BasementVsClosingPrice = lm(formula = price_closed~factor(basement), data = train)
+BasementVsClosingPrice = lm(formula = price_closed~factor(basement), data = Clean_Data)
 summary(BasementVsClosingPrice)
 ```
 
-This code regresses basement against closing price. The independent variable is the presence of the basement, and the dependent variable is closing price. The coefficient is 31,554, meaning that a house with a basement has an average closing price $31,554 higher than one without a basement, not considering the other variables. The p-value is 0.877582, which means the coefficient is not significant and we cannot reject the null hypothesis that having a basement has no effect on the closing price of the house. The r-squared is 0.0001804, which is the amount of variation in closing price that can be accounted for by presence of a garage. 
+This code regresses basement against closing price. The independent variable is the presence of the basement, and the dependent variable is closing price. The coefficient is 23820, meaning that a house with a basement has an average closing price $23820 higher than one without a basement, not considering the other variables. The p-value is 0.907259, which means the coefficient is not significant and we cannot reject the null hypothesis that having a basement has no effect on the closing price of the house. The r-squared is 0.000109, which is the amount of variation in closing price that can be accounted for by presence of a garage. 
 
 ```{r}
-GarageVsAssessmentValue = lm(formula = assessment_value_town~factor(garage), data = train)
+GarageVsAssessmentValue = lm(formula = assessment_value_town~factor(garage), data = Clean_Data)
 summary(GarageVsAssessmentValue)
 ```
 
-This code regresses garage against assessment value. The independent variable is the presence of the garage, and the dependent variable is assessment value. The coefficient is 259266, meaning that a house with a garage has an assesment value $259266 higher than one without a basement, not considering the other variables. The p-value is 0.0339, meaning this coefficient is significant. Therefore, we reject the null hypothesis that the presence of a garage does not affect the assessment value of a house. The r-squared is .03495, which is the amount of variation in closing price that can be accounted for by presence of a garage. 
+This code regresses garage against assessment value. The independent variable is the presence of the garage, and the dependent variable is assessment value. The coefficient is 267477, meaning that a house with a garage has an assesment value $267477 higher than one without a basement, not considering the other variables. The p-value is 0.0294, meaning this coefficient is significant. Therefore, we reject the null hypothesis that the presence of a garage does not affect the assessment value of a house. The r-squared is 0.03738, which is the amount of variation in closing price that can be accounted for by presence of a garage. 
 
 ```{r}
-GarageVsClosingPrice = lm(formula = price_closed~factor(garage), data = train)
+GarageVsClosingPrice = lm(formula = price_closed~factor(garage), data = Clean_Data)
 summary(GarageVsClosingPrice)
 ```
 
-This code regresses garage against closing price. The independent variable is the presence of the garage, and the dependent variable is closing price. The coefficient is 292397, meaning that a house with a garage has a closing price $292397 higher than one without a basement, not considering the other variables. The p-value is 0.0333, meaning this coefficient is significant. Therefore, we reject the null hypothesis that the presence of a garage does not affect the closing price of a house. The r-squared is .03311, which is the amount of variation in closing price that can be accounted for by presence of a garage. 
+This code regresses garage against closing price. The independent variable is the presence of the garage, and the dependent variable is closing price. The coefficient is 298176, meaning that a house with a garage has a closing price $298176 higher than one without a basement, not considering the other variables. The p-value is 0.037080, meaning this coefficient is significant. Therefore, we reject the null hypothesis that the presence of a garage does not affect the closing price of a house. The r-squared is .03311, which is the amount of variation in closing price that can be accounted for by presence of a garage. 
 
 ```{r}
-GarageandBasementVsAssessmentValue = lm(formula = assessment_value_town~factor(garage) + factor(basement), data = train)
+GarageandBasementVsAssessmentValue = lm(formula = assessment_value_town~factor(garage) + factor(basement), data = Clean_Data)
 summary(GarageandBasementVsAssessmentValue)
 ```
 This code regresses garage and basement against assessment value. The independent variable is the presence of basement and/or garage, and the dependent variable is assessment value. The coefficient for garage is 255166, meaning that a house with a garage, holding basement constant, has an assessment value $255166 higher than one without a garage. The p-value is 0.0403, meaning this coefficient is significant. Therefore, we reject the null hypothesis that the presence of a garage does not affect the assessment value of a house, holding basement constant. The coefficient for basement is 114140, meaning that a house with a basement, holding garage constant, has an assessment value $114140 higher than a house without a basement. However, the p-value is 0.5143, meaning this coefficient is not significant and we faill to reject the null hypothesis that the presence of a basement does not affect the assessment value of a house, holding garage constant. The r-squared is 0.04069, which is the amount of variation in closing price that can be accounted for by presence of a garage and/or basement. 
 
 
 ```{r}
-GarageandBasementVsClosingPrice = lm(formula = price_closed~factor(garage) + factor(basement), data = train)
+GarageandBasementVsClosingPrice = lm(formula = price_closed~factor(garage) + factor(basement), data = Clean_Data)
 summary(GarageandBasementVsClosingPrice)
 ```
-This code regresses garage and basement against closing price. The independent variable is the presence of basement and/or garage, and the dependent variable is closing price. The coefficient for garage is 315049, meaning that a house with a garage, holding basement constant, has a closing price $315049 higher than one without a garage. The p-value is 0.0275, meaning this coefficient is significant. Therefore, we reject the null hypothesis that the presence of a garage does not affect the closing price of a house, holding basement constant. The coefficient for basement is -37740, meaning that a house with a basement, holding garage constant, has a closing price $37740 less than a house without a basement. However, the p-value is 0.8534, meaning this coefficient is not significant and we faill to reject the null hypothesis that the presence of a basement does not affect the closing price of a house, holding garage constant. The r-squared is 0.03672, which is the amount of variation in closing price that can be accounted for by presence of a garage and/or basement. 
+This code regresses garage and basement against closing price. The independent variable is the presence of basement and/or garage, and the dependent variable is closing price. The coefficient for garage is 302681, meaning that a house with a garage, holding basement constant, has a closing price $302681 higher than one without a garage. The p-value is 0.0372, meaning this coefficient is significant. Therefore, we reject the null hypothesis that the presence of a garage does not affect the closing price of a house, holding basement constant. The coefficient for basement is -41761, meaning that a house with a basement, holding garage constant, has a closing price $41761 less than a house without a basement. However, the p-value is 0.8379, meaning this coefficient is not significant and we faill to reject the null hypothesis that the presence of a basement does not affect the closing price of a house, holding garage constant. The r-squared is 0.03464, which is the amount of variation in closing price that can be accounted for by presence of a garage and/or basement. 
 
 From these regressions, we concluded that the garage does seem to have predictive power over the assessment value and closing price of houses, while basement does not. Interacting the two variables does not affect these conclusions.
 
