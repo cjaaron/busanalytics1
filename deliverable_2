@@ -117,3 +117,9 @@ train.3[train.3$city!="Pomfret",]$isPomfret=""
 train.3$isFloodZone=0
 train.3[train.3$flood_zone=="Yes",]$isFloodZone="Yes"
 train.3[train.3$isFloodZone=="0",]$isFloodZone=""
+
+test_lm_45=lm(data=train.3,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isPomfret)+garage_capacity+factor(isRiver)*acres)
+
+test_lm_46=lm(data=train.3,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+garage_capacity+tax_gross_amount*acres)
+
+test_lm_47=lm(data=train.3,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+garage_capacity+tax_gross_amount*acres+tax_gross_amount*garage_capacity)
