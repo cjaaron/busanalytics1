@@ -225,8 +225,6 @@ summary(test_lm_47)
 
 This model uses square feet interacted with whether the house is inPomfret, tax amount interacted with whether the house in in Pomfret, whether the house is next to a river interacted with the number of acres of the property, garage capacity, tax interacted with the number of acres of the property, and tax interacted with garage capacity. As we can see from the coefficients of the regression, a unit increase is square feet produces a  $1.062e+02 decrease in closing price. The p-value of this coefficient is $7.98e-05, meaning it is significant. A unit increase in tax produces a $6.600e+01 increase in closing price, an increase in garage capacity produces a -5.331e+04 decrease in closing price, a unit increase in tax for a house in Pomfret produces a $3.396e+01 unit decrease in closing price, a house with a unit decrease in acres produces a 8.452e+04 increase in closing price for a house next to a river rather than not next to a river, and a house with an increase in garage capacity has a $4.222e+00 increase in closing price when interacted with acres. 
 
-The following code loads the validate data, which will be used to test the predictive power of the models we have chosen. We will first create corresponding "isPomfret", "isRiver", and "isFloodZone" columns in the validate data set, and then calculate predicted error for each of the three models. 
-
 ```{r}
 library(readr)
 validate <- read_csv("~/Downloads/validate.csv")
@@ -260,13 +258,6 @@ predicted.price.47 = predict(test_lm_47, validate)
 prediction.error47 = sqrt(mean((predicted.price.47-validate$price_closed)^2))
 prediction.error47
 ```
-The model with the lowest prediction error is test 45. Because it has the lowest predicted error, we select it as the best model. 
-
-```{r}
-summary(test_lm_45)
-```
-
-Test 45 includes the following explanatory variables: square feet interacted with whether or not the house is in Pomfret, tax interacted with whether or not the house is in Pomfret, whether the house in Pomfret, garage capacity, and whether the house is near a river interacted with acres. We see that a unit increase in square feet results in a $8.102e+04 decrease in closing price. The coefficient is 0.000291 which means it is significant. Similarly, a unit increase in tax results in a 7.679e+01 increase in closing price, which has a p-value of < 2e-16 and is therefore significant. Houses in Pomfret experience a $3.936e+01 decrease in closing price per unit change in tax as compared to houses not in Pomfret -- this coefficient has a p-value of 1.89e-05 and is significant. Lastly, houses near a river see a $8.230e+04 increase in closing price when there is a one unit change in acres, with a p-value 4.56e-14 and therefore a significant coefficient. 
 
 **8. What is the predicted closing price for the training data, given your regression model? How does it compare with actual closing price?**
 
@@ -286,3 +277,5 @@ test_lm_47=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_a
 summary(test_lm_47)
 ```
 ANALYZE REGRESSION 47
+
+###The managers at MLS can take a few lessons from our model when trying to predict closing prices.  First, properties with higher taxes sell for higher closing prices. This is a fairly intuitive result, as the more valuable a property is, the government will want to tax it more. Next, houses in Pomfret are significantly more valuable as well. While this doesn’t show up in the intercept of our model, being in Pomfret increases the amount that the closing price goes up as the amount taxed increases. If there is a larger garage that can store more cars, the amount that the price increases per increase in amount taxed also increases. Finally, there is a significant bump in closing price if there is a river and the property has many acres. This makes sense, as longer rivers are more valuable than shorter rivers. Therefore, if MLS is looking to make larger commissions from selling more expensive houses, they should try to attract larger homes in Pomfret that will be taxed heavily, have large garages and long rivers in the backyards of these homes.
