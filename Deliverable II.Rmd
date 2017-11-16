@@ -220,3 +220,17 @@ knitr::kable(lm_chart, caption = "Alternate Regressions")
 > validate$common_land_acres=NULL
 > validate$water_frontage_length=NULL
 > validate=na.exclude((validate))
+
+> predicted.price.45 = predict(test_lm_45, validate)
+> prediction.error45 = sqrt(mean((predicted.price.45-validate$price_closed)^2))
+> prediction.error45
+[1] 187842.7
+> 
+> predicted.price.46 = predict(test_lm_46, validate)
+> prediction.error46 = sqrt(mean((predicted.price.46-validate$price_closed)^2))
+> prediction.error46
+[1] 484704.8
+> 
+> predicted.price.47 = predict(test_lm_47, validate)
+> prediction.error47 = sqrt(mean((predicted.units.47-validate$price_closed)^2))
+> prediction.error47
