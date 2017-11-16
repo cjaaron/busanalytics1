@@ -255,6 +255,13 @@ prediction.error47
 
 **8. What is the predicted closing price for the training data, given your regression model? How does it compare with actual closing price?**
 
+To compare the predicted and actual closing prices within the training dataset, we plotted the actual closing prices (red) and predicted closing prices (blue) together to get a visual understanding of accuracy. Based on the graph, we can see the predicted values seem to be relatively similar to the actualing closing prices. 
+
+```{r}
+train$predicted = predict(test_lm_47, train)
+plot(y = train$price_closed, x = train$id, type = "l", main = "Real v. Predicted Closing Price", xlab = "Property Number", ylab = "Price", col = "red")
+lines(y = train$predicted, x = train$id, col = "blue")
+```
 
 **9. Summarize your findings for MLS’ managers, and make recommendations for their improving their closing price prediction strategy.**
 
