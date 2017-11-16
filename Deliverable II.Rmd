@@ -259,8 +259,9 @@ To compare the predicted and actual closing prices within the training dataset, 
 
 ```{r}
 train$predicted = predict(test_lm_47, train)
-plot(y = train$price_closed, x = train$id, type = "l", main = "Real v. Predicted Closing Price", xlab = "Property Number", ylab = "Price", col = "red")
+plot(y = train$price_closed, x = train$id, type = "l", main = "Real v. Predicted Closing Price for Train Data", xlab = "Property Number", ylab = "Price", col = "red")
 lines(y = train$predicted, x = train$id, col = "blue")
+legend("topleft", legend=c("Actual", "Predicted"), text.col=c("red", "blue"))
 ```
 
 **9. Summarize your findings for MLS’ managers, and make recommendations for their improving their closing price prediction strategy.**
