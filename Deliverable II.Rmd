@@ -204,7 +204,7 @@ The chart below shows the Adjusted R squared, AIC, and BIC for the three alterna
 
 The chart below shows the Adjusted R squared, AIC, and BIC for the three alternate regressions. 
 
-```{r}
+```{r results = 'asis'}
 vectorlm_1 = c("test_lm_45=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isPomfret)+garage_capacity+factor(isRiver)*acres)", 0.876, 3388.944, 3419.878)
 vectorlm_2 = c("test_lm_46=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+garage_capacity+tax_gross_amount*acres)", 0.8798, 3386.102, 3419.849)
 vectorlm_3 = c("test_lm_47=lm(data=train.3,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+garage_capacity+tax_gross_amount*acres+tax_gross_amount*garage_capacity)", 0.8902, 3375.794, 3412.353)
