@@ -182,3 +182,26 @@ From these regressions, we concluded that the garage does seem to have predictiv
 
 **7. You may extend this analysis by further controlling for omitted variable biases. Mention which variables you are using as controls, and re-do the regression from part (6) after adding these controls. Interpret your findings and note the change in R-squared. [Hint: For this part, you may use the “train” and “validate” datasets, and comment on which regression model provides the best fit. Alternatively, you may use any of likelihood or Information Criterion techniques discussed in class.]**
 
+**7. You may extend this analysis by further controlling for omitted variable biases. Mention which variables you are using as controls, and re-do the regression from part (6) after adding these controls. Interpret your findings and note the change in R-squared. [Hint: For this part, you may use the “train” and “validate” datasets, and comment on which regression model provides the best fit. Alternatively, you may use any of likelihood or Information Criterion techniques discussed in class.]**
+
+Starting with closing price with respect to acres, we proceeded to add variables we though might be important, such as water body type, rooms total, total square feet, tax gross amount, and existance of a garage, as we noted the garage variable to be meaningful earlier regressions run earlier in this report. When we found out that rivers, Pomfret, and flood zones might be significant, we created additional columns that to denote whether these variables existed. 
+
+```{r}
+train$isRiver=0
+ train[train$water_body_type=="River",]$isRiver="Yes"
+ train[train$isRiver=="0",]$isRiver=""
+ 
+ train$isPomfret=0
+ train[train$city=="Pomfret",]$isPomfret="Yes"
+ train[train$city!="Pomfret",]$isPomfret=""
+ 
+ train$isFloodZone=0
+ train[train$flood_zone=="Yes",]$isFloodZone="Yes"
+ train[train$isFloodZone=="0",]$isFloodZone=""
+```
+
+The chart below shows the Adjusted R squared, AIC, and BIC for the three alternate regressions. 
+
+```{r}
+knitr::kable(lm_chart, caption = "Alternate Regressions")
+```
