@@ -56,7 +56,7 @@ These variables are used together later in this report to compare the mean asses
 
 *Garage Capacity*
 
-There is only one missing data point in the variable for garage capacity. To address this, we simply omitted it when we tested for its impact on closing price in the regression. To ensure the omission did not impact the data, we checked the summary statistcs of garage capacity before and after the omission -- there was no difference. 
+There is only one missing data point in the variable for garage capacity. To address this, we simply omitted it when we tested for its impact on closing price in the regression. To ensure the omission did not impact the data, we checked the summary statistcs of garage capacity before and after the omission - there was no difference. 
 
 ```{r}
 summary(train$garage_capacity)
@@ -75,7 +75,7 @@ train$short_sale[is.na(train$short_sale)] = "Yes"
 
 **4. Provide a brief summary of takeaways from Interim Deliverable-I. These could include key summary statistics tables or plots.**
 
-The major takeaways from Interim Deliverable I were as follows:
+*The major takeaways from Interim Deliverable I were as follows:*
 
 While closing price and assesment value follow the same general trends, closing price is higher. This plot shows overlaying denstiy plots for assesment value and closing price. We see that while closing price is generally higher than assesment value, the two are fairly similar. This suggests town assesment value is a reasonable predictor of closing price, but does tend to understimate prices. 
 ```{r}
@@ -182,55 +182,84 @@ From these regressions, we concluded that the garage does seem to have predictiv
 
 **7. You may extend this analysis by further controlling for omitted variable biases. Mention which variables you are using as controls, and re-do the regression from part (6) after adding these controls. Interpret your findings and note the change in R-squared. [Hint: For this part, you may use the “train” and “validate” datasets, and comment on which regression model provides the best fit. Alternatively, you may use any of likelihood or Information Criterion techniques discussed in class.]**
 
-**7. You may extend this analysis by further controlling for omitted variable biases. Mention which variables you are using as controls, and re-do the regression from part (6) after adding these controls. Interpret your findings and note the change in R-squared. [Hint: For this part, you may use the “train” and “validate” datasets, and comment on which regression model provides the best fit. Alternatively, you may use any of likelihood or Information Criterion techniques discussed in class.]**
-
-Starting with closing price with respect to acres, we proceeded to add variables we though might be important, such as water body type, rooms total, total square feet, tax gross amount, and existance of a garage, as we noted the garage variable to be meaningful earlier regressions run earlier in this report. When we found out that rivers, Pomfret, and flood zones might be significant, we created additional columns that to denote whether these variables existed. 
+Starting with closing price with respect to acres, we proceeded to add variables we though might be important, such as water body type, rooms total, total square feet, tax gross amount, and existance of a garage, as we noted the garage variable to be meaningful regressions run earlier in this report. When we found out that rivers, Pomfret, and flood zones might be significant, we created additional Boolean variables to denote whether these variables existed. 
 
 ```{r}
+train$water_body_type[is.na(train$water_body_type)] = "No"
+
 train$isRiver=0
- train[train$water_body_type=="River",]$isRiver="Yes"
- train[train$isRiver=="0",]$isRiver=""
+train[train$water_body_type == "River",]$isRiver="Yes"
+train[train$water_body_type == "No",]$isRiver="No"
  
- train$isPomfret=0
- train[train$city=="Pomfret",]$isPomfret="Yes"
- train[train$city!="Pomfret",]$isPomfret=""
+train$isPomfret=0
+train[train$city=="Pomfret",]$isPomfret="Yes"
+train[train$city!="Pomfret",]$isPomfret=""
  
- train$isFloodZone=0
- train[train$flood_zone=="Yes",]$isFloodZone="Yes"
- train[train$isFloodZone=="0",]$isFloodZone=""
+train$isFloodZone=0
+train[train$flood_zone=="Yes",]$isFloodZone="Yes"
+train[train$isFloodZone=="0",]$isFloodZone=""
 ```
 
-The chart below shows the Adjusted R squared, AIC, and BIC for the three alternate regressions. 
+After running over 45 regressions, we narrowed it down to three that, based on high Adjusted R-squares and low AICs and BICs, seem to explain the closing price best. The chart below shows the Adjusted R squared, AIC, and BIC for the three alternate regressions. 
 
 ```{r}
+test_lm_45=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isPomfret)+garage_capacity+factor(isRiver)*acres)
+test_lm_46=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+garage_capacity+tax_gross_amount*acres)
+test_lm_47=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+garage_capacity+tax_gross_amount*acres+tax_gross_amount*garage_capacity)
+```
+
+
+```{r results = 'asis'}
+vectorlm_1 = c("test_lm_45=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isPomfret)+garage_capacity+factor(isRiver)*acres)", 0.876, 3388.944, 3419.878)
+vectorlm_2 = c("test_lm_46=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+garage_capacity+tax_gross_amount*acres)", 0.8798, 3386.102, 3419.849)
+vectorlm_3 = c("test_lm_47=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+garage_capacity+tax_gross_amount*acres+tax_gross_amount*garage_capacity)", 0.8902, 3375.794, 3412.353)
+lm_chart = rbind(vectorlm_1, vectorlm_2, vectorlm_3)
+colnames(lm_chart) = c("Regression", "Adjusted R-squared", "AIC", "BIC")
 knitr::kable(lm_chart, caption = "Alternate Regressions")
 ```
-> validate$isRiver=0
-> validate[validate$water_body_type=="River",]$isRiver="Yes"
-> validate[validate$isRiver=="0",]$isRiver=""
-> 
-> validate$isPomfret=0
-> validate[validate$city=="Pomfret",]$isPomfret="Yes"
-> validate[validate$city!="Pomfret",]$isPomfret=""
-> 
-> validate$isFloodZone=0
-> validate[validate$flood_zone=="Yes",]$isFloodZone="Yes"
-> validate[validate$isFloodZone=="0",]$isFloodZone=""
+Our data shows that regression 47, which accounts for total squre feet, is Pomfret, tax gross amount, acres, garage capacity, tax gross amount, and garage capacity has the best explanitory power. 
 
-> validate$common_land_acres=NULL
-> validate$water_frontage_length=NULL
-> validate=na.exclude((validate))
+```{r}
+library(readr)
+validate <- read_csv("~/Downloads/validate.csv")
 
-> predicted.price.45 = predict(test_lm_45, validate)
-> prediction.error45 = sqrt(mean((predicted.price.45-validate$price_closed)^2))
-> prediction.error45
-[1] 187842.7
-> 
-> predicted.price.46 = predict(test_lm_46, validate)
-> prediction.error46 = sqrt(mean((predicted.price.46-validate$price_closed)^2))
-> prediction.error46
-[1] 484704.8
-> 
-> predicted.price.47 = predict(test_lm_47, validate)
-> prediction.error47 = sqrt(mean((predicted.units.47-validate$price_closed)^2))
-> prediction.error47
+validate$water_body_type[is.na(validate$water_body_type)] = "No"
+validate$isRiver=0
+validate[validate$water_body_type == "River",]$isRiver="Yes"
+validate[validate$water_body_type == "No",]$isRiver="No"
+
+validate$isPomfret=0
+validate[validate$city=="Pomfret",]$isPomfret="Yes"
+validate[validate$city!="Pomfret",]$isPomfret=""
+
+validate$isFloodZone=0
+validate[validate$flood_zone=="Yes",]$isFloodZone="Yes"
+validate[validate$isFloodZone=="0",]$isFloodZone=""
+
+validate$common_land_acres=NULL
+validate$water_frontage_length=NULL
+validate=na.exclude((validate))
+
+predicted.price.45 = predict(test_lm_45, validate)
+prediction.error45 = sqrt(mean((predicted.price.45-validate$price_closed)^2))
+prediction.error45
+
+predicted.price.46 = predict(test_lm_46, validate)
+prediction.error46 = sqrt(mean((predicted.price.46-validate$price_closed)^2))
+prediction.error46
+
+predicted.price.47 = predict(test_lm_47, validate)
+prediction.error47 = sqrt(mean((predicted.price.47-validate$price_closed)^2))
+prediction.error47
+```
+
+**8. What is the predicted closing price for the training data, given your regression model? How does it compare with actual closing price?**
+
+
+**9. Summarize your findings for MLS’ managers, and make recommendations for their improving their closing price prediction strategy.**
+
+```{r}
+test_lm_47=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+garage_capacity+tax_gross_amount*acres+tax_gross_amount*garage_capacity)
+summary(test_lm_47)
+```
+ANALYZE REGRESSION 47
