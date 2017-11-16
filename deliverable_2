@@ -104,3 +104,16 @@ Closing_v_Estimate = subset(train, select=c("id", "assessment_value_town", "pric
 Closing_v_Estimate$difference = Closing_v_Estimate$assessment_value_town - Closing_v_Estimate$price_closed
 
 ### there are 6 estimates that are over $1,000,000 off and over 50 estimates that are over $100,000 off. 
+
+
+train.3$isRiver=0
+train.3[train.3$water_body_type=="River",]$isRiver="Yes"
+train.3[train.3$isRiver==”0”,]$isRiver=""
+
+train.3$isPomfret=0
+train.3[train.3$city=="Pomfret",]$isPomfret="Yes"
+train.3[train.3$city!="Pomfret",]$isPomfret=""
+
+train.3$isFloodZone=0
+train.3[train.3$flood_zone=="Yes",]$isFloodZone="Yes"
+train.3[train.3$isFloodZone=="0",]$isFloodZone=""
