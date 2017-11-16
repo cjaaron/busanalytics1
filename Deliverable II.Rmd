@@ -202,13 +202,21 @@ train$isRiver=0
 
 The chart below shows the Adjusted R squared, AIC, and BIC for the three alternate regressions. 
 
-The chart below shows the Adjusted R squared, AIC, and BIC for the three alternate regressions. 
-
-```{r results = 'asis'}
-vectorlm_1 = c("test_lm_45=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isPomfret)+garage_capacity+factor(isRiver)*acres)", 0.876, 3388.944, 3419.878)
-vectorlm_2 = c("test_lm_46=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+garage_capacity+tax_gross_amount*acres)", 0.8798, 3386.102, 3419.849)
-vectorlm_3 = c("test_lm_47=lm(data=train.3,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+garage_capacity+tax_gross_amount*acres+tax_gross_amount*garage_capacity)", 0.8902, 3375.794, 3412.353)
-lm_chart = rbind(vectorlm_1, vectorlm_2, vectorlm_3)
-colnames(lm_chart) = c("Regression", "Adjusted R-squared", "AIC", "BIC")
+```{r}
 knitr::kable(lm_chart, caption = "Alternate Regressions")
 ```
+> validate$isRiver=0
+> validate[validate$water_body_type=="River",]$isRiver="Yes"
+> validate[validate$isRiver=="0",]$isRiver=""
+> 
+> validate$isPomfret=0
+> validate[validate$city=="Pomfret",]$isPomfret="Yes"
+> validate[validate$city!="Pomfret",]$isPomfret=""
+> 
+> validate$isFloodZone=0
+> validate[validate$flood_zone=="Yes",]$isFloodZone="Yes"
+> validate[validate$isFloodZone=="0",]$isFloodZone=""
+
+> validate$common_land_acres=NULL
+> validate$water_frontage_length=NULL
+> validate=na.exclude((validate))
