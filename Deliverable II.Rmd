@@ -237,6 +237,15 @@ prediction.error47 = sqrt(mean((predicted.price.47-validate$price_closed)^2))
 prediction.error47
 ```
 
+
+The model with the lowest prediction error is test 45. Because it has the lowest predicted error, we select it as the best model. 
+ 
+ ```{r}
+ summary(test_lm_45)
+ ```
+ 
+ Test 45 includes the following explanatory variables: square feet interacted with whether or not the house is in Pomfret, tax interacted with whether or not the house is in Pomfret, whether the house in Pomfret, garage capacity, and whether the house is near a river interacted with acres. We see that a unit increase in square feet results in a $8.102e+04 decrease in closing price. The coefficient is 0.000291 which means it is significant. Similarly, a unit increase in tax results in a 7.679e+01 increase in closing price, which has a p-value of < 2e-16 and is therefore significant. Houses in Pomfret experience a $3.936e+01 decrease in closing price per unit change in tax as compared to houses not in Pomfret -- this coefficient has a p-value of 1.89e-05 and is significant. Lastly, houses near a river see a $8.230e+04 increase in closing price when there is a one unit change in acres, with a p-value 4.56e-14 and therefore a significant coefficient. 
+ 
 **8. What is the predicted closing price for the training data, given your regression model? How does it compare with actual closing price?**
 
 To compare the predicted and actual closing prices within the training dataset, we plotted the actual closing prices (red) and predicted closing prices (blue) together to get a visual understanding of accuracy. Based on the graph, we can see the predicted values seem to be relatively similar to the actualing closing prices. This means that our regression predicts closing prices in the data set we used to develop it fairly accurately. 
