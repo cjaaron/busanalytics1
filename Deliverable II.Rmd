@@ -83,8 +83,10 @@ train$short_sale[is.na(train$short_sale)] = "Yes"
 While closing price and assesment value follow the same general trends, closing price is higher. This plot shows overlaying denstiy plots for assesment value and closing price. We see that while closing price is generally higher than assesment value, the two are fairly similar. This suggests town assesment value is a reasonable predictor of closing price, but does tend to understimate prices. 
 
 ```{r out.width = "50%"}
-plot(density(na.exclude(train$price_closed)))
-lines(density(na.exclude(train$assessment_value_town)))
+plot(density(train$price_closed), main = "Overlaying density plots Assesment Value and Closing Price", xlab = "Price/Value ($)", col = "blue")
+lines(density(na.exclude(train$assessment_value_town)), col = "red")
+legend("topright", c("Closing Price", "Assessment Value"), fill = c("blue",
+"red"))
 ```
 
 Total square feet and closing price are positively correlated. This shows us a scatter plot of square feet plotted against closing price. 
