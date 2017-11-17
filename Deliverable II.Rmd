@@ -7,6 +7,11 @@ output: pdf_document
 The URL for our team GitHub repository: https://github.com/cjaaron/busanalytics1.git 
 The URL for the Kaggle dataset: https://www.kaggle.com/paulina7/notebook535f98bf8e/data
 
+```{r}
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+```
+
 **1. What is MLS’ data problem? What is the final managerial objective?**
 
 MLS, or Multiple Listing Service, is a database of housing information for real estate agents across the United States. While there is a plethora of information available regarding houses sold across the country provided by MLS, no formula exists to predict the closing prices of houses based on collected variables. In this case, a local Vermont real estate firm is aiming to model closed prices for houses which could provide a few benefits for the managerial team and comfort for both buyers and sellers in that they know the information they get from their real estate agent is based on data, increasing the customer’s trust in the firm.
