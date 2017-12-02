@@ -69,7 +69,7 @@ Clean_Garage_Cap = subset(train, train$id!= 128)
 summary(Clean_Garage_Cap$garage_capacity)
 ```
 
-*Garage Type, Short Sale*
+*Garage Type, Short Sale, Easements*
 
 Missing data points for garage type variable allign with "No" in the Garage variable, meaning we can change all the missing data in this variable to "No" rather than leaving it is "NA," or missing data. For the short sale variable, a majority of the data is no, and we believe it is safe to assume the missing data means "Yes," as "Yes" is not represented at all in the variable. For the easment variable, only "No" is represented, so we believe it is safe to assume the missing data means "Yes."
 
