@@ -319,7 +319,54 @@ summary(taxtest)
 
 We see from these regressions that tax is highly correlated with the assessment value of the town. The coefficient of the first regression means that for every unit increase in taxes, there is a $14,312.206 increase in the assessment value. This coefficient is significant and the regression has  an r-squared of .75, meaning the amount of tax accounts for 75% of the variation in assessment value. The second regression has a coefficient of 6.314e+01, meaning that for each unit increase in taxes there is a 6.314e+01 increase in closing price. The coefficient is significant and the r-squared of the regression is 0.7152, meaning that tax accounts for roughly 72% of variation in closing price. The coefficient sign for both these regressions make sense, because higher taxes generally means a more valuable property, leading to higher assesment values and closing prices. The third regression has a coefficient of 13.32, meaning that an increase in taxes leads to a $13.32 increase in deviation between closinng price and assessment value. This coefficient is significant, and the r-squared of this regression is .07099, meaning that the tax amount accounts for only 7% of the variation in deviation between assessment value and closing price. The sign and magnitude of this coefficient is intuitive, becauase the interpretation of the regression is that increasing taxes has a small but positive effect on the deviation between assessment value and closing price. This suggests that as taxes increase, the town tends to underestimate to a greater degree the value of houses. This may suggest that towns are hesistant to make further increases in assessments when subject to political pressure from taxpayers, because taxes tend to be based off of assessment values. However, this pressure is counteracted by the town's desire to raise assessment values and thereby raise taxes in order to raise funds. Therefore, the magnitude of the coefficient remains small and r-squared is only 7%.
 
+**11. Finally, predict the closing price for the test data using the best model for closing price/assessment deviation. Create the 95% confidence interval for each of the test data properties. Assuming MLS receives a 8% commission on the sale of these properties, what is the predicted revenue for MLS and the associated 95% confidence interval?**
 
+```{r}
+library(readr)
+test <- read_csv("~/Downloads/test.csv")
+
+test$water_body_type[is.na(test$water_body_type)] = "No"
+test$isRiver=0
+test[test$water_body_type == "River",]$isRiver="Yes"
+test[test$water_body_type != "River",]$isRiver="No"
+
+test$isPomfret=0
+test[test$city=="Pomfret",]$isPomfret="Yes"
+test[test$city!="Pomfret",]$isPomfret=""
+
+test$common_land_acres=NULL
+test$water_frontage_length=NULL
+
+train$isGarageDetached = 0
+train[train$garage_type == "Detached",]$isGarageDetached = "Yes"
+
+test$garage_type[is.na(test$garage_type)] = "Unknown"
+test$isGarageDetached = 0
+test[test$garage_type == "Detached",]$isGarageDetached = "Yes"
+
+trial_lm30=lm(data=train,assessment_deviation~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+tax_gross_amount*acres+isGarageDetached*garage_capacity+total_stories+short_sale+acres*sq_ft_tot_fn)
+
+predictedCP = predict(trial_lm30, test, se.fit = TRUE)
+test$predictedCP = predict(trial_lm30, test)
+test$se.fit = predictedCP$se.fit
+test$upper.limit = test$predictedCP + qnorm(0.975) * test$se.fit
+test$lower.limit = test$predictedCP - qnorm(0.975) * test$se.fit
+test$expected.profit = (.08) * test$predictedCP
+test$profit.upper.limit = (.08) * test$upper.limit
+test$profit.lower.limit = (.08) * test$lower.limit
+
+test$profit.upper.limit[is.na(test$profit.upper.limit)] = 0
+test$profit.lower.limit[is.na(test$profit.lower.limit)] = 0
+
+Total.Profit = sum(test$expected.profit)
+Total.Profit.Upper.Limit = sum(test$profit.upper.limit)
+Total.Profit.Lower.Limit = sum(test$profit.lower.limit)
+
+Total.Profit.Lower.Limit
+Total.Profit.Upper.Limit
+
+```
+With 95% confidence, total revenue on the test data lies between -$188,734.4 and $80.758.41.
 
 **12. NEED TO UPDATE THIS FROM DELIVERABLE II!!!! Summarize your findings for MLS’ managers, and make recommendations for their improving their closing price prediction strategy.**
 
