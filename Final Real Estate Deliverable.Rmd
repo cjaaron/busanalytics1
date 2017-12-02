@@ -257,16 +257,22 @@ Test 45 includes the following explanatory variables: square feet interacted wit
 
 **8. What is the predicted closing price for the training data, given your regression model? How does it compare with actual closing price?**
 
-To compare the predicted and actual closing prices within the training dataset, we plotted the actual closing prices and predicted closing prices together to get a visual understanding of accuracy. Based on the graph, we can see the predicted values seem to be relatively similar to the actualing closing prices. This means that our regression predicts closing prices in the data set we used to develop it fairly accurately. 
 
 ```{r opts.label = "figure2"}
-train$predicted = predict(test_lm_47, train)
-plot(y = train$price_closed, x = train$id, type = "l", 
-     main = "Real v. Predicted Closing Price for Train Data", 
-     xlab = "Property Number", 
-     ylab = "Price", col = "red")
-lines(y = train$predicted, x = train$id, col = "blue")
-legend("topleft", legend=c("Actual", "Predicted"), text.col=c("red", "blue"))
+Pomfret = subset(train, city == "Pomfret")
+Woodstock = subset(train, city == "Woodstock")
+Barnard = subset (train, city == "Barnard")
+
+Pomfret$PredictionError = abs(Pomfret$price_closed - Pomfret$assessment_value_town)/Pomfret$price_closed *100
+
+Woodstock$PredictionError = abs(Woodstock$price_closed - Woodstock$assessment_value_town)/Woodstock$price_closed *100
+
+Barnard$PredictionError = abs(Barnard$price_closed - Barnard$assessment_value_town)/Barnard$price_closed *100
+
+plot(density(na.exclude(Pomfret$PredictionError)), xlim=c(-10 , 125), ylim = c(0 , 0.025), col = "blue" , main = "Percent Error by Town" , xlab ="Percent Error")
+lines(density(na.exclude(Woodstock$PredictionError)) , col = "red")
+lines(density(na.exclude(Barnard$PredictionError)) , col = "green")
+legend("topright" , c("Pomfret","Woodstock", "Barnard"), fill=c("blue", "red" , "green") )
 ```
 
 **9. Alternatively, you can analyze the difference between assessment values and closing prices (assessment deviation) and their correlation with property-related factors. Re- perform the analyses for parts 6-8. Clearly state the independent variables chosen for your best model for explaining assessment deviation. What factors affect this deviation between assessment valuations and closing prices? Does the mean % error decrease by using assessment deviation instead?**
