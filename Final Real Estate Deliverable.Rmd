@@ -283,7 +283,18 @@ Clean_Data$assessment_deviation = Clean_Data$price_closed - Clean_Data$assessmen
 GarageandBasementVsAssessmentDeviation = lm(formula = assessment_deviation ~ factor(garage) + factor(basement), data = Clean_Data)
 Summary(GarageandBasementVsAssessmentDeviation)
 ```
+*Does the mean % error decrease by using assessment deviation instead?*
 
+The follow code finds that our mean % error using the initial model was 23.19%. 
+```{r}
+PercentError = subset(validate, select = c("price_closed", "predicted"))
+Clean_PercentError = PercentError[complete.cases(PercentError),]
+View(Clean_PercentError)
+Clean_PercentError$percent_error = ((Clean_PercentError$price_closed - Clean_PercentError$predicted)/Clean_PercentError$price_closed)*100
+Clean_PercentError$abs_percent_error = abs(Clean_PercentError$percent_error)
+View(Clean_PercentError)
+mean(Clean_PercentError$abs_percent_error)
+```
 
 
 OLD NUMBER 8 **8. What is the predicted closing price for the training data, given your regression model? How does it compare with actual closing price?**
