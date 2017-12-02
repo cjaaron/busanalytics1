@@ -1,0 +1,274 @@
+---
+title: "Final Real Estate Deliverable"
+author: "Charlotte Aaron, Eva Spitzen, & Saul Cohen"
+date: "12/2/2017"
+output: pdf_document
+---
+
+The URL for our team GitHub repository: https://github.com/cjaaron/busanalytics1.git 
+The URL for the Kaggle dataset: https://www.kaggle.com/paulina7/notebook535f98bf8e/data
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+```
+**1. What is MLS’ data problem? What is the final managerial objective?**
+
+MLS, or Multiple Listing Service, is a database of housing information for real estate agents across the United States. While there is a plethora of information available regarding houses sold across the country provided by MLS, no formula exists to predict the closing prices of houses based on collected variables. In this case, a local Vermont real estate firm is aiming to model closed prices for houses which could provide a few benefits for the managerial team and comfort for both buyers and sellers in that they know the information they get from their real estate agent is based on data, increasing the customer’s trust in the firm.
+
+In creating a model that predicts closing prices, real estate firms can streamline the process by which they set asking prices. Currently, real estate firms determine asking prices by conducting research into similar properties and using real estate agents’ instinct to determine how much buyers will pay for houses. This process is inefficient, because ultimately selling prices are determined by buyers, and setting an unrealistic asking price results in drawn-out sales. In addition, pricing a home accurately and therefore achieving quicker sales means that the firm will experience higher earnings, because homes that sell more quickly tend to sell closer to the asking price. Without a way to accurately predict closing prices, real estate firms waste valuable time and resources experimenting with different asking prices until they find buyers.
+
+**2. Describe the measurement types of each variable**
+
+To gain a baseline understanding of the data frame and associated variables, we examined the structure of the database. We found that the data frame includes integer, numeric, and character measurement types.
+
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+library(readr)
+train = read_csv("~/Library/Mobile Documents/com~apple~CloudDocs/2017 Fall/Business Analytics/Project 1/train.csv")
+```
+
+To develop a deeper understanding of the measurement types of each variable, we used the code str(train) to go through variable by variable to see how each one was formatted and the meaning of each variable in the context of the real estate market.
+
+*Variable Measurement Types*
+
+  + Nominal
+    - ID, Address, City, Garage_type, Water_body_type, Basement_access_type
+  + Interval
+    - Bedrooms_total, Baths_total, Total_stories
+  + Ratio
+    - Acres, Sq_ft_tot_, Tax_gross_amount, Garage_capacity, Water_frontage_length, Rooms_total, Common_land_acres, Price_closed
+  + Boolean
+    - Surveyed, Seasonal, Short_sale, Garage, Clood_zone, Easements, Current_use, Covenants, Basement
+
+**3. How do you handle missing data in this dataset? Clearly mention if you are using data imputation techniques (if so, which one) or dropping observations (in this case, mention how many observations). For whichever technique you choose, provide brief summary statistics for your data before and after handling missing data.**
+
+While there were many variables with missing data, we only address those that proved to be relevant to our report below. 
+
+*Acres*
+
+There was only one missing datapoint for acres, as well as one datapoint where acres was listed as '0 acres,' which we know is not possible. To address this, we conducted research online and filled in the missing data using acre information from Trulia.com and Zillow. 
+
+```{r}
+train[128, 4] = 4.79
+train[58, 4] = .54
+```
+
+*Town Assessment Value, Closing Price, Basement, and Garage*
+
+(The code used to clean this data can be found under question 5.)
+
+These variables are used together later in this report to compare the mean assessment price and closing prices by the presence of garage or basement in the property and to determine whether the presence of garage and/or basement affects the assessment value and closing price for the property; however, the basement variable had 3 missing data points, and the town assessment value variable had 8 missing data points, with one row of data missing from both assessment value and basement. To address this missing data, we created a new data frame with only complete cases, resulting in the loss of 10 rows of data. To ensure that ommitting the data did not impact the data in a drastic way, we compared the summary statistics between the two data sets. The median values of both the assessment values and the closing prices remained the same. The mean assessment value increased by 0.76% and the mean closing price decreased by 0.49% - neither change great enough to raise red flags about impacting ttest results. 
+
+*Garage Capacity*
+
+There is only one missing data point in the variable for garage capacity. To address this, we simply omitted it when we tested for its impact on closing price in the regression. To ensure the omission did not impact the data, we checked the summary statistcs of garage capacity before and after the omission - there was no difference. 
+
+```{r}
+summary(train$garage_capacity)
+Clean_Garage_Cap = subset(train, train$id!= 128)
+summary(Clean_Garage_Cap$garage_capacity)
+```
+
+*Garage Type, Short Sale*
+
+Missing data points for garage type variable allign with "No" in the Garage variable, meaning we can change all the missing data in this variable to "No" rather than leaving it is "NA," or missing data. For the short sale variable, a majority of the data is no, and we believe it is safe to assume the missing data means "Yes," as "Yes" is not represented at all in the variable. 
+
+```{r}
+train$garage_type[is.na(train$garage_type)] = "No"
+train$short_sale[is.na(train$short_sale)] = "Yes"
+```
+
+**4. Provide a brief summary of takeaways from Interim Deliverable-I. These could include key summary statistics tables or plots.**
+
+*The major takeaways from Interim Deliverable I were as follows:*
+
+While closing price and assesment value follow the same general trends, closing price is higher. This plot shows overlaying density plots for assessment value and closing price. We see that while closing price is generally higher than assesment value, the two are fairly similar. This suggests town assessment value is a reasonable predictor of closing price, but does tend to understimate prices. 
+```{r out.width = "50%"}
+plot(density(train$price_closed), 
+     main = "Overlaying density plots Assesment Value and Closing Price", 
+     xlab = "Price/Value ($)", col = "blue")
+lines(density(na.exclude(train$assessment_value_town)), col = "red")
+legend("topright", c("Closing Price", "Assessment Value"), fill = c("blue",
+"red"))
+```
+
+Below are a series of plots that show price increases with the increase of square feet, total bedrooms, total bathrooms, and acres. These correlations do not surprise us, as the more features or space a home house, the more money it will cost. 
+
+Total square feet and closing price are positively correlated. This does not surprise us because larger houses sell for more. This code shows us a scatter plot of square feet plotted against closing price. 
+```{r out.width = "50%"}
+plot(train$sq_ft_tot_fn, train$price_closed, 
+     main = "Scatter Plot of Square Feet vs. Price", 
+     ylab = "Closing Price ($)", xlab = "Square Feet (#)")
+```
+Total bedrooms and closing price are positively correlated. This shows us a scatter plot of total bedrooms versus closing price. 
+```{r out.width = "50%"}
+plot(train$rooms_total, train$price_closed, 
+     main = "Scatter Plot of Square Feet vs. Price", 
+     ylab = "Closing Price ($),", xlab = "Total bedrooms (#)") 
+```
+Total bathrooms and closing price are positively correlated. This shows us a scatter plot of total bathrooms versus closing price. 
+```{r out.width = "50%"}
+plot(train$baths_total, train$price_closed, 
+     main = "Scatter Plot of # of bathrooms vs. Price", 
+     ylab = "Closing Price ($),", xlab = "Bathrooms (#)") 
+```
+Acres and closing price are positively correlated. This shows us a scatter plot of acres versus closing price. We have adjusted the scale of the x-axis to better see the correlation.
+```{r out.width = "50%"}
+plot(train$acres, train$price_closed, 
+     main = "Scatter Plot acres vs. Price", ylab = "Closing Price ($),", 
+     xlab = "Acres", xlim = c(0, 350)) 
+```
+
+We also concluded that there does not appear to be correlation between closing price and year built, as shown by the following scatterplot. This surprised us, as we assumed older, historic houses and newer houses would cost more than houses built in the 1900s, but this was not the case. 
+```{r out.width = "50%"}
+plot(train$year_built , train$price_closed , 
+     main = "Scatter Plot of Year vs. Price" , ylab = "Closing Price ($)" , xlab = "Year")
+```
+
+Conclusively, our closing price coorelations should that more features and larger proterty lead to a higher closing price. 
+
+**5. Compare the mean assessment price and closing prices by the presence of garage or basement in the property. Clearly mention the type of two-sample t-test you would be using, the null and alternate hypotheses for these tests. Interpret the results of these t- tests.**
+
+```{r}
+Closing_v_Estimate = subset(train, select=c("id", "assessment_value_town", "price_closed"))
+Closing_v_Estimate$garage = train$garage
+Closing_v_Estimate$basement = train$basement
+summary(Closing_v_Estimate)
+Clean_Data = Closing_v_Estimate[complete.cases(Closing_v_Estimate),]
+summary(Clean_Data)
+```
+Before we were able to conduct analysis, we created a new dataset that ommitted any rows with missing data (NAs) - we provided an explanation for this earlier in the report. 
+
+```{r}
+t.test(Clean_Data[Clean_Data$garage == "Yes",]$price_closed, Clean_Data[Clean_Data$garage == "No",]$price_closed)
+```
+We ran an Independent Samples t-test because we were comparing the same variable, closing price, between two sub-samples, houses with garages and houses without garages. Our null hypothesis was that there is no difference in closing prices between houses with garages and houses without garages. The results of our t-test show that we can reject our null hypothesis and state that, with more than 99% confidence, the alternative hypothesis, which says the difference in average closing price between houses with and without garages is not 0, is true (p<.001). This means there is most likely a significant difference between the closing prices of houses with and without garages, with the mean of houses with garages being significantly more than the mean of houses without garages. 
+```{r}
+t.test(Clean_Data[Clean_Data$basement == "Yes",]$price_closed, Clean_Data[Clean_Data$basement == "No",]$price_closed)
+```
+To test whether or not houses with basements had significantly higher closing prices than houses without basements, we ran another Independent Samples t-test. Our null hypothesis was that there is no difference in closing price between houses with and without basements. The results of our t-test show that we cannot reject the null with 95% confidence, meaning there is no significant difference between the closing price of houses with and without basements (p>.05).
+```{r}
+t.test(Clean_Data[Clean_Data$garage == "Yes",]$assessment_value_town, Clean_Data[Clean_Data$garage == "No",]$assessment_value_town)
+```
+Just as there was a significant difference in the closing price between houses with and without garages, there is a significant difference in town assessment value between houses with and without garages. To determine this, we ran an Indepenent Samples t-test for which our null hypothesis was that there is no significant difference assessment value between houses with and without garages. The results of our t-test show that we can reject the null and accept the alternative hypothesis, which states that the difference in average assessment values between houses with and without garages is not zero, with 95% confidence (p<.05). This means in terms of the real estate business that the town does take the presence of garages into account when determining the assessment value of houses and values houses with garages significantly higher, on average, than houses without garages. 
+
+```{r}
+t.test(Clean_Data[Clean_Data$basement == "Yes",]$assessment_value_town, Clean_Data[Clean_Data$basement == "No",]$assessment_value_town)
+```
+Last, we checked to see if there exists a significant difference in the town assessment values of houses with and without basements. We used an Independent Samples t-test for which our null hypothesis was that there is no significant difference between the assessment values. The t-test showed that we are not able to reject the null with 95% confidence, meaning town assessers of house values most likely do not take the existance of a basement into account when coming out with the value of the house (p>.05).
+
+**6. Determine whether the presence of garage and/or basement affects the assessment value and closing price for the property. Clearly state the dependent and independent variables used in your regression analysis. Interpret the findings of this analysis, and note the R-squared.**
+
+```{r}
+GarageandBasementVsAssessmentValue = lm(formula = assessment_value_town~factor(garage) + factor(basement), data = Clean_Data)
+summary(GarageandBasementVsAssessmentValue)
+```
+This code regresses garage and basement against assessment value. The independent variable is the presence of basement and/or garage, and the dependent variable is assessment value. The coefficient for garage is $255,166, meaning that a house with a garage, holding basement constant, has an assessment value $255,166 higher than one without a garage. The p-value is 0.0403, meaning this coefficient is significant. Therefore, we reject the null hypothesis that the presence of a garage does not affect the assessment value of a house, holding basement constant. The coefficient for basement is $114,140, meaning that a house with a basement, holding garage constant, has an assessment value $114,140 higher than a house without a basement. However, the p-value is 0.5143, meaning this coefficient is not significant and we fail to reject the null hypothesis that the presence of a basement does not affect the assessment value of a house, holding garage constant. The r-squared is 0.04069, which is the amount of variation in closing price that can be accounted for by presence of a garage and/or basement. 
+
+```{r}
+GarageandBasementVsClosingPrice = lm(formula = price_closed~factor(garage) + factor(basement), data = Clean_Data)
+summary(GarageandBasementVsClosingPrice)
+```
+This code regresses garage and basement against closing price. The independent variable is the presence of basement and/or garage, and the dependent variable is closing price. The coefficient for garage is $302,681, meaning that a house with a garage, holding basement constant, has a closing price $302,681 higher than one without a garage. The p-value is 0.0372, meaning this coefficient is significant. Therefore, we reject the null hypothesis that the presence of a garage does not affect the closing price of a house, holding basement constant. The coefficient for basement is -$41,761, meaning that a house with a basement, holding garage constant, has a closing price $41,761 less than a house without a basement. However, the p-value is 0.8379, meaning this coefficient is not significant and we faill to reject the null hypothesis that the presence of a basement does not affect the closing price of a house, holding garage constant. The r-squared is 0.03464, which is the amount of variation in closing price that can be accounted for by presence of a garage and/or basement. 
+
+From these regressions, we concluded that the garage does seem to have predictive power over the assessment value and closing price of houses, while basement does not. Interacting the two variables does not affect these conclusions.
+
+**7. You may extend this analysis by further controlling for omitted variable biases. Mention which variables you are using as controls, and re-do the regression from part (6) after adding these controls. Interpret your findings and note the change in R-squared. [Hint: For this part, you may use the “train” and “validate” datasets, and comment on which regression model provides the best fit. Alternatively, you may use any of likelihood or Information Criterion techniques discussed in class.]**
+
+In order to find a model that closely predicted closing price, we ran regressions using variables we though might have explanatory power on closing price, including water body type, rooms total, total square feet, tax gross amount, and existence of a garage. We found out that a house being near a river, being in Pomfret, and being in a flood zone appeared to be significant, and created additional Boolean variables to denote whether for any given property the Boolean variable actually existed (Yes) or did not exist (No). 
+
+```{r}
+train$water_body_type[is.na(train$water_body_type)] = "No"
+
+train$isRiver=0
+train[train$water_body_type == "River",]$isRiver="Yes"
+train[train$water_body_type == "No",]$isRiver="No"
+ 
+train$isPomfret=0
+train[train$city=="Pomfret",]$isPomfret="Yes"
+train[train$city!="Pomfret",]$isPomfret=""
+ 
+train$isFloodZone=0
+train[train$flood_zone=="Yes",]$isFloodZone="Yes"
+train[train$isFloodZone=="0",]$isFloodZone=""
+```
+
+After running over 45 regressions, we narrowed it down to three that, based on high Adjusted R-squares and low AICs and BICs, seem to explain the closing price best. The chart below shows the Adjusted R squared, AIC, and BIC for the three alternate regressions. 
+
+```{r}
+test_lm_45=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isPomfret)+garage_capacity+factor(isRiver)*acres)
+test_lm_46=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+garage_capacity+tax_gross_amount*acres)
+test_lm_47=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+garage_capacity+tax_gross_amount*acres+tax_gross_amount*garage_capacity)
+```
+
+```{r results = 'asis'}
+vectorlm_1 = c("test_lm_45", 0.876, 3388.944, 3419.878)
+vectorlm_2 = c("test_lm_46", 0.8798, 3386.102, 3419.849)
+vectorlm_3 = c("test_lm_47", 0.8902, 3375.794, 3412.353)
+lm_chart = rbind(vectorlm_1, vectorlm_2, vectorlm_3)
+colnames(lm_chart) = c("Regression", "Adjusted R-squared", "AIC", "BIC")
+knitr::kable(lm_chart, caption = "Alternate Regressions")
+```
+
+Our data shows that regression 47, which accounts for total squre feet, is Pomfret, tax gross amount, acres, garage capacity, tax gross amount, and garage capacity has the best explanitory power.
+
+```{r}
+summary(test_lm_47)
+```
+This model uses square feet interacted with whether the house is in Pomfret, tax amount interacted with whether the house is in Pomfret, whether the house is next to a river interacted with the number of acres of the property, garage capacity, tax interacted with the number of acres of the property, and tax interacted with garage capacity. As we can see from the coefficients of the regression, a unit increase in square feet produces a $1.062e+02 decrease in closing price. The p-value of this coefficient is 7.98e-05, meaning it is significant. A unit increase in tax produces a $6.600e+01 increase in closing price, an increase in garage capacity produces a $5.331e+04 decrease in closing price, a unit increase in tax for a house in Pomfret produces a $3.396e+01 unit decrease in closing price, a house with a unit decrease in acres produces a $8.452e+04 increase in closing price for a house next to a river rather than not next to a river, and a house with an increase in garage capacity has a $4.222e+00 increase in closing price when interacted with acres, meaning the effect of garage capacity is amplified in properties with more acres.
+```{r}
+library(readr)
+validate <- read_csv("~/Downloads/validate.csv")
+
+validate$water_body_type[is.na(validate$water_body_type)] = "No"
+validate$isRiver=0
+validate[validate$water_body_type == "River",]$isRiver="Yes"
+validate[validate$water_body_type == "No",]$isRiver="No"
+
+validate$isPomfret=0
+validate[validate$city=="Pomfret",]$isPomfret="Yes"
+validate[validate$city!="Pomfret",]$isPomfret=""
+
+validate$isFloodZone=0
+validate[validate$flood_zone=="Yes",]$isFloodZone="Yes"
+validate[validate$isFloodZone=="0",]$isFloodZone=""
+
+validate$common_land_acres=NULL
+validate$water_frontage_length=NULL
+validate=na.exclude((validate))
+
+predicted.price.45 = predict(test_lm_45, validate)
+prediction.error45 = sqrt(mean((predicted.price.45-validate$price_closed)^2))
+prediction.error45
+
+predicted.price.46 = predict(test_lm_46, validate)
+prediction.error46 = sqrt(mean((predicted.price.46-validate$price_closed)^2))
+prediction.error46
+
+predicted.price.47 = predict(test_lm_47, validate)
+prediction.error47 = sqrt(mean((predicted.price.47-validate$price_closed)^2))
+prediction.error47
+```
+The model with the lowest prediction error is test 45. Because it has the lowest predicted error, we select it as the best model. 
+```{r}
+summary(test_lm_45)
+```
+Test 45 includes the following explanatory variables: square feet interacted with whether or not the house is in Pomfret, tax interacted with whether or not the house is in Pomfret, whether the house in Pomfret, garage capacity, and whether the house is near a river interacted with acres. We see that a unit increase in square feet results in a $8.102e+04 decrease in closing price. The coefficient is 0.000291 which means it is significant. Similarly, a unit increase in tax results in a $7.679e+01 increase in closing price, which has a p-value of < 2e-16 and is therefore significant. Houses in Pomfret experience a $3.936e+01 decrease in closing price per unit change in tax as compared to houses not in Pomfret -- this coefficient has a p-value of 1.89e-05 and is significant. Lastly, houses near a river see a $8.230e+04 increase in closing price when there is a one unit change in acres, with a p-value 4.56e-14 and therefore a significant coefficient. 
+
+**8. What is the predicted closing price for the training data, given your regression model? How does it compare with actual closing price?**
+
+To compare the predicted and actual closing prices within the training dataset, we plotted the actual closing prices and predicted closing prices together to get a visual understanding of accuracy. Based on the graph, we can see the predicted values seem to be relatively similar to the actualing closing prices. This means that our regression predicts closing prices in the data set we used to develop it fairly accurately. 
+
+```{r opts.label = "figure2"}
+train$predicted = predict(test_lm_47, train)
+plot(y = train$price_closed, x = train$id, type = "l", 
+     main = "Real v. Predicted Closing Price for Train Data", 
+     xlab = "Property Number", 
+     ylab = "Price", col = "red")
+lines(y = train$predicted, x = train$id, col = "blue")
+legend("topleft", legend=c("Actual", "Predicted"), text.col=c("red", "blue"))
+```
+
+**9. Summarize your findings for MLS’ managers, and make recommendations for their improving their closing price prediction strategy.**
+
+The managers at MLS can take a few lessons from our model when trying to predict closing prices.  First, properties with higher taxes sell for higher closing prices. This is a fairly intuitive result, as the more valuable a property is, the government will want to tax it more. Next, houses in Pomfret are significantly more valuable as well. The coefficient for a house just being in Pomfret isn't significant, but the effect of gross taxes on closing prices is amplified. If there is a larger garage that can store more cars, the amount that the price increases per increase in amount taxed also increases. Finally, there is a significant bump in closing price if there is a river and the property has many acres. This makes sense, as longer rivers are more valuable than shorter rivers. Therefore, if MLS is looking to make larger commissions from selling more expensive houses, they should try to attract larger homes in Pomfret that will be taxed heavily, have large garages and long rivers in the backyards of these homes. Further, even with less expensive houses, it is beneficial be able to accruatly predict housing prices, have expidited sales for their customers, and translates to higher earnings. 
