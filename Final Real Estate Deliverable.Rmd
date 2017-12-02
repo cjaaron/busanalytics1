@@ -297,20 +297,6 @@ mean(Clean_PercentError$abs_percent_error)
 ```
 
 
-OLD NUMBER 8 **8. What is the predicted closing price for the training data, given your regression model? How does it compare with actual closing price?**
-
-To compare the predicted and actual closing prices within the training dataset, we plotted the actual closing prices and predicted closing prices together to get a visual understanding of accuracy. Based on the graph, we can see the predicted values seem to be relatively similar to the actualing closing prices. This means that our regression predicts closing prices in the data set we used to develop it fairly accurately. 
-
-```{r opts.label = "figure2"}
-train$predicted = predict(test_lm_47, train)
-plot(y = train$price_closed, x = train$id, type = "l", 
-     main = "Real v. Predicted Closing Price for Train Data", 
-     xlab = "Property Number", 
-     ylab = "Price", col = "red")
-lines(y = train$predicted, x = train$id, col = "blue")
-legend("topleft", legend=c("Actual", "Predicted"), text.col=c("red", "blue"))
-```
-
 **10. How does the gross amount of property taxes affect the assessment value/closing price/assessment deviation for properties? Does the coefficient sign make sense?**
 
 ```{r}
