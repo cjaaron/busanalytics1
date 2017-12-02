@@ -182,7 +182,7 @@ train$water_body_type[is.na(train$water_body_type)] = "No"
 
 train$isRiver=0
 train[train$water_body_type == "River",]$isRiver="Yes"
-train[train$water_body_type == "No",]$isRiver="No"
+train[train$water_body_type != "River",]$isRiver="No"
  
 train$isPomfret=0
 train[train$city=="Pomfret",]$isPomfret="Yes"
@@ -223,7 +223,7 @@ validate <- read_csv("~/Downloads/validate.csv")
 validate$water_body_type[is.na(validate$water_body_type)] = "No"
 validate$isRiver=0
 validate[validate$water_body_type == "River",]$isRiver="Yes"
-validate[validate$water_body_type == "No",]$isRiver="No"
+validate[validate$water_body_type != "River",]$isRiver="No"
 
 validate$isPomfret=0
 validate[validate$city=="Pomfret",]$isPomfret="Yes"
