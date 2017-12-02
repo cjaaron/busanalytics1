@@ -256,18 +256,22 @@ summary(test_lm_45)
 ```
 Test 45 includes the following explanatory variables: square feet interacted with whether or not the house is in Pomfret, tax interacted with whether or not the house is in Pomfret, whether the house in Pomfret, garage capacity, and whether the house is near a river interacted with acres. We see that a unit increase in square feet results in a $8.102e+04 decrease in closing price. The coefficient is 0.000291 which means it is significant. Similarly, a unit increase in tax results in a $7.679e+01 increase in closing price, which has a p-value of < 2e-16 and is therefore significant. Houses in Pomfret experience a $3.936e+01 decrease in closing price per unit change in tax as compared to houses not in Pomfret -- this coefficient has a p-value of 1.89e-05 and is significant. Lastly, houses near a river see a $8.230e+04 increase in closing price when there is a one unit change in acres, with a p-value 4.56e-14 and therefore a significant coefficient. 
 
-**8. What is the predicted closing price for the training data, given your regression model? How does it compare with actual closing price?**
+**8. What is the predicted closing price for the validation data, given your regression model for closing price? How does it compare with actual closing price? Plot the prediction error by town. Are there significant differences in prediction error across towns? [Hint: Get mean % error to compare actual and predicted closing prices].**
+```{r}
+Pomfret = subset(validate, city == "Pomfret")
+Woodstock = subset(validate, city == "Woodstock")
+Barnard = subset (validate, city == "Barnard")
 
-To compare the predicted and actual closing prices within the training dataset, we plotted the actual closing prices and predicted closing prices together to get a visual understanding of accuracy. Based on the graph, we can see the predicted values seem to be relatively similar to the actualing closing prices. This means that our regression predicts closing prices in the data set we used to develop it fairly accurately. 
+Pomfret$PredictionError = abs(Pomfret$price_closed - Pomfret$assessment_value_town)/Pomfret$price_closed *100
 
-```{r opts.label = "figure2"}
-train$predicted = predict(test_lm_47, train)
-plot(y = train$price_closed, x = train$id, type = "l", 
-     main = "Real v. Predicted Closing Price for Train Data", 
-     xlab = "Property Number", 
-     ylab = "Price", col = "red")
-lines(y = train$predicted, x = train$id, col = "blue")
-legend("topleft", legend=c("Actual", "Predicted"), text.col=c("red", "blue"))
+Woodstock$PredictionError = abs(Woodstock$price_closed - Woodstock$assessment_value_town)/Woodstock$price_closed *100
+
+Barnard$PredictionError = abs(Barnard$price_closed - Barnard$assessment_value_town)/Barnard$price_closed *100
+
+plot(density(na.exclude(Pomfret$PredictionError)), xlim=c(-10 , 125), ylim = c(0 , 0.025), col = "blue" , main = "Percent Error by Town" , xlab ="Percent Error")
+lines(density(na.exclude(Woodstock$PredictionError)) , col = "red")
+lines(density(na.exclude(Barnard$PredictionError)) , col = "green")
+legend("topright" , c("Pomfret","Woodstock", "Barnard"), fill=c("blue", "red" , "green") )
 ```
 
 **9. Alternatively, you can analyze the difference between assessment values and closing prices (assessment deviation) and their correlation with property-related factors. Re- perform the analyses for parts 6-8. Clearly state the independent variables chosen for your best model for explaining assessment deviation. What factors affect this deviation between assessment valuations and closing prices? Does the mean % error decrease by using assessment deviation instead?**
@@ -282,7 +286,19 @@ Summary(GarageandBasementVsAssessmentDeviation)
 
 
 
+OLD NUMBER 8 **8. What is the predicted closing price for the training data, given your regression model? How does it compare with actual closing price?**
 
+To compare the predicted and actual closing prices within the training dataset, we plotted the actual closing prices and predicted closing prices together to get a visual understanding of accuracy. Based on the graph, we can see the predicted values seem to be relatively similar to the actualing closing prices. This means that our regression predicts closing prices in the data set we used to develop it fairly accurately. 
+
+```{r opts.label = "figure2"}
+train$predicted = predict(test_lm_47, train)
+plot(y = train$price_closed, x = train$id, type = "l", 
+     main = "Real v. Predicted Closing Price for Train Data", 
+     xlab = "Property Number", 
+     ylab = "Price", col = "red")
+lines(y = train$predicted, x = train$id, col = "blue")
+legend("topleft", legend=c("Actual", "Predicted"), text.col=c("red", "blue"))
+```
 
 
 **Summarize your findings for MLS’ managers, and make recommendations for their improving their closing price prediction strategy.**
