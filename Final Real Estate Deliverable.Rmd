@@ -311,6 +311,20 @@ lines(y = train$predicted, x = train$id, col = "blue")
 legend("topleft", legend=c("Actual", "Predicted"), text.col=c("red", "blue"))
 ```
 
+**10. How does the gross amount of property taxes affect the assessment value/closing price/assessment deviation for properties? Does the coefficient sign make sense?**
+
+```{r}
+taxtest1 = lm(data=train , assessment_value_town~tax_gross_amount)
+summary(taxtest1)
+
+taxtest2 = lm (data=train, price_closed~tax_gross_amount)
+summary(taxtest2)
+
+train$assessment_deviation = train$price_closed - train$assessment_value_town
+taxtest3 = lm(data=train, assessment_deviation~tax_gross_amount)
+summary(taxtest)
+```
+
 
 **Summarize your findings for MLS’ managers, and make recommendations for their improving their closing price prediction strategy.**
 
