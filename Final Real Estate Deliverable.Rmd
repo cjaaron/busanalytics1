@@ -270,11 +270,13 @@ Woodstock$PredictionError = abs(Woodstock$price_closed - Woodstock$predicted)/Wo
 
 Barnard$PredictionError = abs(Barnard$price_closed - Barnard$predicted)/Barnard$price_closed *100
 
-plot(density(na.exclude(Pomfret$PredictionError)), xlim=c(-10 , 125), ylim = c(0 , 0.03), col = "gray70" , main = "Percent Error by Town" , xlab ="Percent Error")
+plot(density(na.exclude(Pomfret$PredictionError)), xlim=c(-10 , 125), ylim = c(0 , 0.03), col = "gray70" , main = "Percent Error by Town" , xlab ="Prediction Percent Error")
 lines(density(na.exclude(Woodstock$PredictionError)) , col = "gray40")
 lines(density(na.exclude(Barnard$PredictionError)) , col = "gray8")
 legend("topright" , c("Pomfret","Woodstock", "Barnard"), fill=c("gray70", "gray40" , "gray8") )
 ```
+
+This plot shows a distribution of the percent error of predicted vs. actual closing prices for the validation data set using our regression. We can see that while Barnard and Woodstock have relatively similar distributions, the percent error for Pomfret appears to be higher for the majority of the data points. This suggests that this model may have higher predictive ability for the towns of Woodstock and Barnard than for Pomfret.
 
 
 **9. Alternatively, you can analyze the difference between assessment values and closing prices (assessment deviation) and their correlation with property-related factors. Re- perform the analyses for parts 6-8. Clearly state the independent variables chosen for your best model for explaining assessment deviation. What factors affect this deviation between assessment valuations and closing prices? Does the mean % error decrease by using assessment deviation instead?**
@@ -315,6 +317,7 @@ taxtest3 = lm(data=train, assessment_deviation~tax_gross_amount)
 summary(taxtest)
 ``` 
 
+We see from these regressions that tax is highly correlated with the assessment value of the town. The coefficient of the first regression means that for every unit increase in taxes, there is a $14,312.206 increase in the assessment value. This coefficient is significant and the regression has  an r-squared of .75, meaning the amount of tax accounts for 75% of the variation in assessment value. The second regression has a coefficient of 6.314e+01, meaning that for each unit increase in taxes there is a 6.314e+01 increase in closing price. The coefficient is significant and the r-squared of the regression is 0.7152, meaning that tax accounts for roughly 72% of variation in closing price. The coefficient sign for both these regressions make sense, because higher taxes generally means a more valuable property, leading to higher assesment values and closing prices. The third regression has a coefficient of 13.32, meaning that an increase in taxes leads to a $13.32 increase in deviation between closinng price and assessment value. This coefficient is significant, and the r-squared of this regression is .07099, meaning that the tax amount accounts for only 7% of the variation in deviation between assessment value and closing price. The sign and magnitude of this coefficient is intuitive, becauase the interpretation of the regression is that increasing taxes has a small but positive effect on the deviation between assessment value and closing price. This suggests that as taxes increase, the town tends to underestimate to a greater degree the value of houses. This may suggest that towns are hesistant to make further increases in assessments when subject to political pressure from taxpayers, because taxes tend to be based off of assessment values. However, this pressure is counteracted by the town's desire to raise assessment values and thereby raise taxes in order to raise funds. Therefore, the magnitude of the coefficient remains small and r-squared is only 7%.
 
 
 
