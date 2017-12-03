@@ -126,7 +126,7 @@ plot(train$year_built , train$price_closed ,
      main = "Scatter Plot of Year vs. Price" , ylab = "Closing Price ($)" , xlab = "Year")
 ```
 
-Conclusively, our closing price coorelations should that more features and larger proterty lead to a higher closing price. 
+In conclusion, our closing price coorelations showed that more features and larger proterty lead to a higher closing price. 
 
 **5. Compare the mean assessment price and closing prices by the presence of garage or basement in the property. Clearly mention the type of two-sample t-test you would be using, the null and alternate hypotheses for these tests. Interpret the results of these t- tests.**
 
@@ -270,7 +270,7 @@ Woodstock$PredictionError = abs(Woodstock$price_closed - Woodstock$predicted)/Wo
 
 Barnard$PredictionError = abs(Barnard$price_closed - Barnard$predicted)/Barnard$price_closed *100
 
-plot(density(na.exclude(Pomfret$PredictionError)), xlim=c(-10 , 125), ylim = c(0 , 0.03), col = "gray70" , main = "Percent Error by Town" , xlab ="Prediction Percent Error")
+plot(density(na.exclude(Pomfret$PredictionError)), xlim=c(-10 , 125), ylim = c(0 , 0.03), col = "gray70" , main = "Closing Price Percent Error by Town" , xlab ="Prediction Percent Error")
 lines(density(na.exclude(Woodstock$PredictionError)) , col = "gray40")
 lines(density(na.exclude(Barnard$PredictionError)) , col = "gray8")
 legend("topright" , c("Pomfret","Woodstock", "Barnard"), fill=c("gray70", "gray40" , "gray8") )
@@ -288,10 +288,55 @@ Clean_Data$assessment_deviation = Clean_Data$price_closed - Clean_Data$assessmen
 GarageandBasementVsAssessmentDeviation = lm(formula = assessment_deviation ~ factor(garage) + factor(basement), data = Clean_Data)
 summary(GarageandBasementVsAssessmentDeviation)
 ```
+*7. You may extend this analysis by further controlling for omitted variable biases. Mention which variables you are using as controls, and re-do the regression from part (6) after adding these controls. Interpret your findings and note the change in R-squared. [Hint: For this part, you may use the “train” and “validate” datasets, and comment on which regression model provides the best fit. Alternatively, you may use any of likelihood or Information Criterion techniques discussed in class.]
+
+```{r}
+trial_lm34=lm(data=train,assessment_deviation~tax_gross_amount+sq_ft_tot_fn:factor(isPomfret)+tax_gross_amount:factor(isPomfret)+factor(isRiver):acres+tax_gross_amount:acres+isGarageDetached:garage_capacity+total_stories+short_sale+acres*sq_ft_tot_fn+rooms_total*total_stories)
+
+trial_lm35=lm(data=train,assessment_deviation~tax_gross_amount+sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount:factor(isPomfret)+factor(isRiver):acres+tax_gross_amount:acres+isGarageDetached:garage_capacity+total_stories+short_sale+acres*sq_ft_tot_fn+rooms_total*total_stories)
+
+trial_lm36=lm(data=train,assessment_deviation~tax_gross_amount+sq_ft_tot_fn:factor(isPomfret)+tax_gross_amount:factor(isPomfret)+factor(isRiver):acres+tax_gross_amount:acres+isGarageDetached:garage_capacity+total_stories+short_sale+acres*sq_ft_tot_fn+rooms_total*total_stories+surveyed)
+
+predicted.deviation.34 = predict(trial_lm34, validate)
+prediction.error34 = sqrt(mean((predicted.deviation.34-validate$assessment_deviation)^2))
+prediction.error34
+
+predicted.deviation.35 = predict(test_lm_46, validate)
+prediction.error35 = sqrt(mean((predicted.deviation.35-validate$assessment_deviation)^2))
+prediction.error35
+
+predicted.deviation.36 = predict(test_lm_47, validate)
+prediction.error36 = sqrt(mean((predicted.deviation.36-validate$assessment_deviation)^2))
+prediction.error36
+
+```
+
+*8. What is the predicted closing price for the validation data, given your regression model for closing price? How does it compare with actual closing price? Plot the prediction error by town. Are there significant differences in prediction error across towns? [Hint: Get mean % error to compare actual and predicted closing prices].**
+
+```{r}
+validate$predicted = predict2(trial_lm36, validate)
+validate$assessment_deviation = validate$price_closed - validate$assessment_value_town
+
+Pomfret = subset(validate, city == "Pomfret")
+Woodstock = subset(validate, city == "Woodstock")
+Barnard = subset (validate, city == "Barnard")
+
+Pomfret$PredictionError = abs(Pomfret$assessment_deviation - Pomfret$predicted2)/Pomfret$assessment_deviation *100
+
+Woodstock$PredictionError = abs(Woodstock$assessment_deviation - Woodstock$predicted2)/Woodstock$assessment_deviation *100
+
+Barnard$PredictionError = abs(Barnard$assessment_deviation - Barnard$predicted2)/Barnard$assessment_deviation *100
+
+plot(density(na.exclude(Pomfret$PredictionError)), xlim=c(-10 , 125), ylim = c(0 , 0.03), col = "gray70" , main = "Assessment Deviation Percent Error by Town" , xlab ="Prediction Percent")
+lines(density(na.exclude(Woodstock$PredictionError)) , col = "gray40")
+lines(density(na.exclude(Barnard$PredictionError)) , col = "gray8")
+legend("topright" , c("Pomfret","Woodstock", "Barnard"), fill=c("gray70", "gray40" , "gray8") )
+```
+
 
 *Does the mean % error decrease by using assessment deviation instead?*
 
-The follow code finds that our mean % error using the initial model was 23.19%. 
+The following code finds that our mean % error using the initial model was 23.19%. 
 ```{r}
 PercentError = subset(validate, select = c("price_closed", "predicted"))
 Clean_PercentError = PercentError[complete.cases(PercentError),]
@@ -301,6 +346,8 @@ Clean_PercentError$abs_percent_error = abs(Clean_PercentError$percent_error)
 View(Clean_PercentError)
 mean(Clean_PercentError$abs_percent_error)
 ```
+
+
 
 
 **10. How does the gross amount of property taxes affect the assessment value/closing price/assessment deviation for properties? Does the coefficient sign make sense?**
