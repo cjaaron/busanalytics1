@@ -391,6 +391,8 @@ test$garage_type[is.na(test$garage_type)] = "Unknown"
 test$isGarageDetached = 0
 test[test$garage_type == "Detached",]$isGarageDetached = "Yes"
 
+test$short_sale[is.na(test$short_sale)] = "Yes"
+
 trial_lm30=lm(data=train,assessment_deviation~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+tax_gross_amount*acres+isGarageDetached*garage_capacity+total_stories+short_sale+acres*sq_ft_tot_fn)
 
 predictedCP = predict(trial_lm30, test, se.fit = TRUE)
@@ -413,7 +415,7 @@ Total.Profit.Lower.Limit
 Total.Profit.Upper.Limit
 
 ```
-With 95% confidence, total revenue on the test data lies between $145,293.60 and $414,786.40. We were able to find this by adding the predicted assessment deviation to the assessment value for each property. 
+With 95% confidence, based on the test data sales, total profit on the test data lies between $426,129.70 and $1,051,359. We were able to find this by adding the predicted assessment deviation to the assessment value for each property. It is worth noting three of the properties in the data set were not assessed by the town, so using the assessment deviation approach, we were unable to produce a predicted closing price. 
 
 **12. NEED TO UPDATE THIS FROM DELIVERABLE II!!!! Summarize your findings for MLS’ managers, and make recommendations for their improving their closing price prediction strategy.**
 
