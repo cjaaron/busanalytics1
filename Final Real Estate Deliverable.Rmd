@@ -316,8 +316,10 @@ prediction.error36
 *8. What is the predicted closing price for the validation data, given your regression model for closing price? How does it compare with actual closing price? Plot the prediction error by town. Are there significant differences in prediction error across towns? [Hint: Get mean % error to compare actual and predicted closing prices].**
 
 ```{r}
-validate$predicted2 = predict(trial_lm36, validate)
+
 validate$assessment_deviation = validate$price_closed - validate$assessment_value_town
+
+validate$predicted2 = predict(trial_lm34, validate)
 
 Pomfret = subset(validate, city == "Pomfret")
 Woodstock = subset(validate, city == "Woodstock")
