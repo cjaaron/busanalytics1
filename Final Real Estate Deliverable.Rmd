@@ -398,9 +398,9 @@ test$predictedCP = predict(trial_lm30, test)
 test$se.fit = predictedCP$se.fit
 test$upper.limit = test$predictedCP + qnorm(0.975) * test$se.fit
 test$lower.limit = test$predictedCP - qnorm(0.975) * test$se.fit
-test$expected.profit = (.08) * test$predictedCP
-test$profit.upper.limit = (.08) * test$upper.limit
-test$profit.lower.limit = (.08) * test$lower.limit
+test$expected.profit = (.08) * (test$predictedCP + test$assessment_value_town)
+test$profit.upper.limit = (.08) * (test$upper.limit + test$assessment_value_town)
+test$profit.lower.limit = (.08) * (test$lower.limit + test$assessment_value_town)
 
 test$profit.upper.limit[is.na(test$profit.upper.limit)] = 0
 test$profit.lower.limit[is.na(test$profit.lower.limit)] = 0
@@ -413,7 +413,7 @@ Total.Profit.Lower.Limit
 Total.Profit.Upper.Limit
 
 ```
-With 95% confidence, total revenue on the test data lies between -$188,734.4 and $80.758.41.
+With 95% confidence, total revenue on the test data lies between $145,293.60 and $414,786.40. We were able to find this by adding the predicted assessment deviation to the assessment value for each property. 
 
 **12. NEED TO UPDATE THIS FROM DELIVERABLE II!!!! Summarize your findings for MLS’ managers, and make recommendations for their improving their closing price prediction strategy.**
 
