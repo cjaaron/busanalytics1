@@ -395,12 +395,12 @@ test$short_sale[is.na(test$short_sale)] = "Yes"
 
 trial_lm30=lm(data=train,assessment_deviation~sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount*factor(isPomfret)+factor(isRiver)*acres+tax_gross_amount*acres+isGarageDetached*garage_capacity+total_stories+short_sale+acres*sq_ft_tot_fn)
 
-predictedCP = predict(trial_lm30, test, se.fit = TRUE)
-test$predictedCP = predict(trial_lm30, test)
-test$se.fit = predictedCP$se.fit
-test$upper.limit = test$predictedCP + qnorm(0.975) * test$se.fit
-test$lower.limit = test$predictedCP - qnorm(0.975) * test$se.fit
-test$expected.profit = (.08) * (test$predictedCP + test$assessment_value_town)
+predictedAD = predict(trial_lm30, test, se.fit = TRUE)
+test$predictedAD = predict(trial_lm30, test)
+test$se.fit = predictedAD$se.fit
+test$upper.limit = test$predictedAD + qnorm(0.975) * test$se.fit
+test$lower.limit = test$predictedAD - qnorm(0.975) * test$se.fit
+test$expected.profit = (.08) * (test$predictedAD + test$assessment_value_town)
 test$profit.upper.limit = (.08) * (test$upper.limit + test$assessment_value_town)
 test$profit.lower.limit = (.08) * (test$lower.limit + test$assessment_value_town)
 
