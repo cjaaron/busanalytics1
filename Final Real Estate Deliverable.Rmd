@@ -83,14 +83,14 @@ train$easements[is.na(train$easements)] = "No"
 
 *The major takeaways from Interim Deliverable I were as follows:*
 
-While closing price and assesment value follow the same general trends, closing price is higher. This plot shows overlaying density plots for assessment value and closing price. We see that while closing price is generally higher than assesment value, the two are fairly similar. This suggests town assessment value is a reasonable predictor of closing price, but does tend to understimate prices. 
+While closing price and assesment value follow the same general trends, closing price is lower. This plot shows overlaying density plots for assessment value and closing price. We see that while closing price is generally higher than assesment value, the two are fairly similar. This suggests town assessment value is a reasonable predictor of closing price, but does tend to understimate prices. 
 ```{r out.width = "50%"}
 plot(density(train$price_closed), 
      main = "Overlaying density plots Assesment Value and Closing Price", 
-     xlab = "Price/Value ($)", col = "blue")
-lines(density(na.exclude(train$assessment_value_town)), col = "red")
-legend("topright", c("Closing Price", "Assessment Value"), fill = c("blue",
-"red"))
+     xlab = "Price/Value ($)", col = "gray70")
+lines(density(na.exclude(train$assessment_value_town)), col = "gray20")
+legend("topright", c("Closing Price", "Assessment Value"), fill = c("gray70",
+"gray20"))
 ```
 
 Below are a series of plots that show price increases with the increase of square feet, total bedrooms, total bathrooms, and acres. These correlations do not surprise us, as the more features or space a home house, the more money it will cost. 
@@ -104,7 +104,7 @@ plot(train$sq_ft_tot_fn, train$price_closed,
 Total bedrooms and closing price are positively correlated. This shows us a scatter plot of total bedrooms versus closing price. 
 ```{r out.width = "50%"}
 plot(train$rooms_total, train$price_closed, 
-     main = "Scatter Plot of Square Feet vs. Price", 
+     main = "Scatter Plot of Bedrooms vs. Price", 
      ylab = "Closing Price ($),", xlab = "Total bedrooms (#)") 
 ```
 Total bathrooms and closing price are positively correlated. This shows us a scatter plot of total bathrooms versus closing price. 
@@ -126,7 +126,7 @@ plot(train$year_built , train$price_closed ,
      main = "Scatter Plot of Year vs. Price" , ylab = "Closing Price ($)" , xlab = "Year")
 ```
 
-In conclusion, our closing price coorelations showed that more features and larger proterty lead to a higher closing price. 
+Conclusively, our closing price coorelations should that more features and larger proterty lead to a higher closing price. 
 
 **5. Compare the mean assessment price and closing prices by the presence of garage or basement in the property. Clearly mention the type of two-sample t-test you would be using, the null and alternate hypotheses for these tests. Interpret the results of these t- tests.**
 
@@ -176,7 +176,7 @@ From these regressions, we concluded that the garage does seem to have predictiv
 
 **7. You may extend this analysis by further controlling for omitted variable biases. Mention which variables you are using as controls, and re-do the regression from part (6) after adding these controls. Interpret your findings and note the change in R-squared. [Hint: For this part, you may use the “train” and “validate” datasets, and comment on which regression model provides the best fit. Alternatively, you may use any of likelihood or Information Criterion techniques discussed in class.]**
 
-In order to find a model that closely predicted closing price, we ran regressions using variables we though might have explanatory power on closing price, including water body type, rooms total, total square feet, tax gross amount, and existence of a garage. We found out that a house being near a river, being in Pomfret, and being in a flood zone appeared to be significant, and created additional Boolean variables to denote whether for any given property the Boolean variable actually existed (Yes) or did not exist (No). 
+In order to find a model that closely predicted closing price, we ran regressions using variables we though might have explanatory power on closing price, including water body type, rooms total, total square feet, tax gross amount, and existence of a garage. We found out that a house being near a river, being in Pomfret, and being in a flood zone appeared to be significant, and created additional Boolean variables to denote whether for any given property the Boolean variable actually existed (Yes) or did not exist (No). We found that the only relevant town variable was when houses were in Pomfret and that the only relevant water body type was river. 
 
 ```{r}
 train$water_body_type[is.na(train$water_body_type)] = "No"
@@ -203,9 +203,9 @@ test_lm_47=lm(data=train,price_closed~sq_ft_tot_fn*factor(isPomfret)+tax_gross_a
 ```
 
 ```{r results = 'asis'}
-vectorlm_1 = c("test_lm_45", 0.876, 3388.944, 3419.878)
-vectorlm_2 = c("test_lm_46", 0.8798, 3386.102, 3419.849)
-vectorlm_3 = c("test_lm_47", 0.8902, 3375.794, 3412.353)
+vectorlm_1 = c("test_lm_45", 0.8777, 3608.411, 3640.038)
+vectorlm_2 = c("test_lm_46", 0.878, 3609.041, 3643.543)
+vectorlm_3 = c("test_lm_47", 0.8859, 3601.211, 3638.588)
 lm_chart = rbind(vectorlm_1, vectorlm_2, vectorlm_3)
 colnames(lm_chart) = c("Regression", "Adjusted R-squared", "AIC", "BIC")
 knitr::kable(lm_chart, caption = "Alternate Regressions")
@@ -216,7 +216,7 @@ Our data shows that regression 47, which accounts for total squre feet, is Pomfr
 ```{r}
 summary(test_lm_47)
 ```
-This model uses square feet interacted with whether the house is in Pomfret, tax amount interacted with whether the house is in Pomfret, whether the house is next to a river interacted with the number of acres of the property, garage capacity, tax interacted with the number of acres of the property, and tax interacted with garage capacity. As we can see from the coefficients of the regression, a unit increase in square feet produces a $1.062e+02 decrease in closing price. The p-value of this coefficient is 7.98e-05, meaning it is significant. A unit increase in tax produces a $6.600e+01 increase in closing price, an increase in garage capacity produces a $5.331e+04 decrease in closing price, a unit increase in tax for a house in Pomfret produces a $3.396e+01 unit decrease in closing price, a house with a unit decrease in acres produces a $8.452e+04 increase in closing price for a house next to a river rather than not next to a river, and a house with an increase in garage capacity has a $4.222e+00 increase in closing price when interacted with acres, meaning the effect of garage capacity is amplified in properties with more acres.
+This model uses square feet interacted with whether the house is in Pomfret, tax amount interacted with whether the house is in Pomfret, whether the house is next to a river interacted with the number of acres of the property, garage capacity, tax interacted with the number of acres of the property, and tax interacted with garage capacity. As we can see from the coefficients of the regression, a unit increase in square feet produces a $108.60 decrease in closing price. The p-value of this coefficient is less than 0.01, meaning it is significant. A unit increase in tax produces a $66.12 increase in closing price, an increase in garage capacity produces a $52,580 decrease in closing price, a unit increase in tax for a house in Pomfret produces a $33.62 unit decrease in closing price, a house with a unit increase in acres produces a $84,850 increase in closing price for a house next to a river rather than not next to a river, and a house with an increase in garage capacity has a $4.22 increase in closing price when interacted with acres, meaning the effect of garage capacity is amplified in properties with more acres.
 ```{r}
 library(readr)
 validate <- read_csv("~/Downloads/validate.csv")
@@ -238,37 +238,40 @@ validate$common_land_acres=NULL
 validate$water_frontage_length=NULL
 
 predicted.price.45 = predict(test_lm_45, validate)
-prediction.error45 = sqrt(mean((predicted.price.45-validate$price_closed)^2))
+prediction.error45 = sqrt(mean((na.exclude(predicted.price.45)-validate$price_closed)^2))
 prediction.error45
 
 predicted.price.46 = predict(test_lm_46, validate)
-prediction.error46 = sqrt(mean((predicted.price.46-validate$price_closed)^2))
+prediction.error46 = sqrt(mean((na.exclude(predicted.price.46)-validate$price_closed)^2))
 prediction.error46
 
 predicted.price.47 = predict(test_lm_47, validate)
-prediction.error47 = sqrt(mean((predicted.price.47-validate$price_closed)^2))
+prediction.error47 = sqrt(mean((na.exclude(predicted.price.47)-validate$price_closed)^2))
 prediction.error47
 ```
 The model with the lowest prediction error is test 45. Because it has the lowest predicted error, we select it as the best model. 
 ```{r}
 summary(test_lm_45)
 ```
-Test 45 includes the following explanatory variables: square feet interacted with whether or not the house is in Pomfret, tax interacted with whether or not the house is in Pomfret, whether the house in Pomfret, garage capacity, and whether the house is near a river interacted with acres. We see that a unit increase in square feet results in a $8.102e+04 decrease in closing price. The coefficient is 0.000291 which means it is significant. Similarly, a unit increase in tax results in a $7.679e+01 increase in closing price, which has a p-value of < 2e-16 and is therefore significant. Houses in Pomfret experience a $3.936e+01 decrease in closing price per unit change in tax as compared to houses not in Pomfret -- this coefficient has a p-value of 1.89e-05 and is significant. Lastly, houses near a river see a $8.230e+04 increase in closing price when there is a one unit change in acres, with a p-value 4.56e-14 and therefore a significant coefficient. 
+Test 45 includes the following explanatory variables: square feet interacted with whether or not the house is in Pomfret, tax interacted with whether or not the house is in Pomfret, whether the house in Pomfret, garage capacity, and whether the house is near a river interacted with acres. We see that a unit increase in square feet results in a $102.10 decrease in closing price. The p-value is 0.000198 which means it is significant. Similarly, a unit increase in tax results in a $77.12 increase in closing price, which has a p-value of <.01 and is therefore significant. Houses in Pomfret experience a $39.23 decrease in closing price per unit change in tax as compared to houses not in Pomfret -- this coefficient has a p-value of <.01 and is significant. Lastly, houses near a river see a $82,860 increase in closing price when there is a one unit change in acres, with a p-value of <.01 and therefore a significant coefficient. 
 
 **8. What is the predicted closing price for the validation data, given your regression model for closing price? How does it compare with actual closing price? Plot the prediction error by town. Are there significant differences in prediction error across towns? [Hint: Get mean % error to compare actual and predicted closing prices].**
 
-```{r}
+```{r out.width = "50%"}
 validate$predicted = predict(test_lm_45, validate)
 
 Pomfret = subset(validate, city == "Pomfret")
 Woodstock = subset(validate, city == "Woodstock")
 Barnard = subset (validate, city == "Barnard")
 
-Pomfret$PredictionError = abs(Pomfret$price_closed - Pomfret$predicted)/Pomfret$price_closed *100
+Pomfret$PredictionError = abs(Pomfret$price_closed 
+       - Pomfret$predicted)/Pomfret$price_closed *100
 
-Woodstock$PredictionError = abs(Woodstock$price_closed - Woodstock$predicted)/Woodstock$price_closed *100
+Woodstock$PredictionError = abs(Woodstock$price_closed 
+        - Woodstock$predicted)/Woodstock$price_closed *100
 
-Barnard$PredictionError = abs(Barnard$price_closed - Barnard$predicted)/Barnard$price_closed *100
+Barnard$PredictionError = abs(Barnard$price_closed 
+        - Barnard$predicted)/Barnard$price_closed *100
 
 plot(density(na.exclude(Pomfret$PredictionError)), xlim=c(-10 , 125), ylim = c(0 , 0.03), col = "gray70" , main = "Closing Price Percent Error by Town" , xlab ="Prediction Percent Error")
 lines(density(na.exclude(Woodstock$PredictionError)) , col = "gray40")
@@ -277,7 +280,6 @@ legend("topright" , c("Pomfret","Woodstock", "Barnard"), fill=c("gray70", "gray4
 ```
 
 This plot shows a distribution of the percent error of predicted vs. actual closing prices for the validation data set using our regression. We can see that while Barnard and Woodstock have relatively similar distributions, the percent error for Pomfret appears to be higher for the majority of the data points. This suggests that this model may have higher predictive ability for the towns of Woodstock and Barnard than for Pomfret.
-
 
 **9. Alternatively, you can analyze the difference between assessment values and closing prices (assessment deviation) and their correlation with property-related factors. Re- perform the analyses for parts 6-8. Clearly state the independent variables chosen for your best model for explaining assessment deviation. What factors affect this deviation between assessment valuations and closing prices? Does the mean % error decrease by using assessment deviation instead?**
 
@@ -290,33 +292,84 @@ summary(GarageandBasementVsAssessmentDeviation)
 ```
 This code regresses garage and basement against assessment deviation. The independent variable is the presence of basement and/or garage, and the dependent variable is the assessment deviation. The coefficient for garage is $47,516, meaning that a house with a garage, holding basement constant, has an assessment deviation value of $47,516 higher than one without a garage. However, the p-value is 0.620, meaning this coefficient is not significnat and we fail to reject the null hypothesis that the presence of a garage does not affect the assessment deviation of a house, holding basement constant. The coefficient for basement is -$155,902, meaning that a house with a basement, holding garage constant, has an assessment deviation value of $155,902 less than one without a basement. However, the p-value is 0.252, meaning this coefficient is not significant and we fail to reject the null hypothesis that the presence of a basement does not affect the assessment deviation of a hosue, holding garage constant. The r-squared is 0.01142, which is the amount of variation in assessment deviation that can be accounted for by the presence of a garage and/or basement. 
 
-*7. You may extend this analysis by further controlling for omitted variable biases. Mention which variables you are using as controls, and re-do the regression from part (6) after adding these controls. Interpret your findings and note the change in R-squared. [Hint: For this part, you may use the “train” and “validate” datasets, and comment on which regression model provides the best fit. Alternatively, you may use any of likelihood or Information Criterion techniques discussed in class.]
+*7. You may extend this analysis by further controlling for omitted variable biases. Mention which variables you are using as controls, and re-do the regression from part (6) after adding these controls. Interpret your findings and note the change in R-squared. [Hint: For this part, you may use the “train” and “validate” datasets, and comment on which regression model provides the best fit. Alternatively, you may use any of likelihood or Information Criterion techniques discussed in class.]*
 
 ```{r}
+validate$water_body_type[is.na(validate$water_body_type)] = "No"
+validate$isRiver=0
+validate[validate$water_body_type == "River",]$isRiver="Yes"
+validate[validate$water_body_type != "River",]$isRiver="No"
+
+validate$isPomfret=0
+validate[validate$city=="Pomfret",]$isPomfret="Yes"
+validate[validate$city!="Pomfret",]$isPomfret=""
+
+validate$common_land_acres=NULL
+validate$water_frontage_length=NULL
+
+train$isGarageDetached = 0
+train[train$garage_type == "Detached",]$isGarageDetached = "Yes"
+
+train$isGarageDetached = 0
+train[train$garage_type == "Detached",]$isGarageDetached = "Yes"
+
+validate$garage_type[is.na(validate$garage_type)] = "Unknown"
+validate$isGarageDetached = 0
+validate[validate$garage_type == "Detached",]$isGarageDetached = "Yes"
+
+validate$short_sale[is.na(validate$short_sale)] = "Yes"
+
 trial_lm34=lm(data=train,assessment_deviation~tax_gross_amount+sq_ft_tot_fn:factor(isPomfret)+tax_gross_amount:factor(isPomfret)+factor(isRiver):acres+tax_gross_amount:acres+isGarageDetached:garage_capacity+total_stories+short_sale+acres*sq_ft_tot_fn+rooms_total*total_stories)
 
 trial_lm35=lm(data=train,assessment_deviation~tax_gross_amount+sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount:factor(isPomfret)+factor(isRiver):acres+tax_gross_amount:acres+isGarageDetached:garage_capacity+total_stories+short_sale+acres*sq_ft_tot_fn+rooms_total*total_stories)
 
 trial_lm36=lm(data=train,assessment_deviation~tax_gross_amount+sq_ft_tot_fn:factor(isPomfret)+tax_gross_amount:factor(isPomfret)+factor(isRiver):acres+tax_gross_amount:acres+isGarageDetached:garage_capacity+total_stories+short_sale+acres*sq_ft_tot_fn+rooms_total*total_stories+surveyed)
 
+validate$assessment_deviation =  validate$price_closed - validate$assessment_value_town
+
+validate$garage_type[is.na(validate$garage_type)] = "Unknown"
+validate$isGarageDetached = 0
+validate[validate$garage_type == "Detached",]$isGarageDetached = "Yes"
+
 predicted.deviation.34 = predict(trial_lm34, validate)
-prediction.error34 = sqrt(mean((predicted.deviation.34-validate$assessment_deviation)^2))
+predicted.deviation.35 = predict(test_lm_46, validate)
+predicted.deviation.36 = predict(test_lm_47, validate)
+
+PredictionError_Data = subset(validate, select = c("id", "assessment_deviation"))
+PredictionError_Data$predicted.deviation.34 = predicted.deviation.34
+PredictionError_Data$predicted.deviation.35 = predicted.deviation.35
+PredictionError_Data$predicted.deviation.36 = predicted.deviation.36
+
+Clean_PredictionError_Data = PredictionError_Data[complete.cases(PredictionError_Data),]
+
+prediction.error34 = sqrt(mean((Clean_PredictionError_Data$predicted.deviation.34-Clean_PredictionError_Data$assessment_deviation)^2))
 prediction.error34
 
-predicted.deviation.35 = predict(test_lm_46, validate)
-prediction.error35 = sqrt(mean((predicted.deviation.35-validate$assessment_deviation)^2))
+prediction.error35 = sqrt(mean((Clean_PredictionError_Data$predicted.deviation.35-Clean_PredictionError_Data$assessment_deviation)^2))
 prediction.error35
 
-predicted.deviation.36 = predict(test_lm_47, validate)
-prediction.error36 = sqrt(mean((predicted.deviation.36-validate$assessment_deviation)^2))
+prediction.error36 = sqrt(mean((Clean_PredictionError_Data$predicted.deviation.36-Clean_PredictionError_Data$assessment_deviation)^2))
 prediction.error36
+```
+We choose model 34 because it has the lowest prediction error.
 
+```{r results = 'asis'}
+vectorlm_4 = c("trial_lm34", 0.5319, 3451.648, 3496.643)
+vectorlm_5 = c("trial_lm35", 0.5319, 3451.648, 3500.569)
+vectorlm_6 = c("trial_lm36", 0.531, 3453.587, 3504.207)
+lm_chart = rbind(vectorlm_4, vectorlm_5, vectorlm_6)
+colnames(lm_chart) = c("Regression", "Adjusted R-squared", "AIC", "BIC")
+knitr::kable(lm_chart, caption = "Alternate Regressions")
 ```
 
-*8. What is the predicted closing price for the validation data, given your regression model for closing price? How does it compare with actual closing price? Plot the prediction error by town. Are there significant differences in prediction error across towns? [Hint: Get mean % error to compare actual and predicted closing prices].**
-
 ```{r}
+summary(trial_lm34)
+```
+This model uses tax, total stories, short sale, acres, square feet, rooms, square feet interacted with whether the house is in Pomfret, tax interacted with whether the house is in Pomfret, the number of acres interacted with whether there is a river, tax interacted with number of acres, whether the garage is detached interacted with garage capacity, square feet interacted with acres, and total stories interacted with rooms. The model allows the interacted terms to have different slopes, but uses the same intercept for interacted terms. The coefficient for tax is 20.12 and is significant (p<.05), meaning there is a $20.12 increase in assessment deviation with a unit increase in taxes. The coefficient for river interacted with acres is 87820, meaning there is a $87,820 increase in assessment deviation for each unit increase in acres for houses with rivers. This coefficient is significant (p<.05). 
 
+*8. What is the predicted closing price for the validation data, given your regression model for closing price? How does it compare with actual closing price? Plot the prediction error by town. Are there significant differences in prediction error across towns? [Hint: Get mean % error to compare actual and predicted closing prices].*
+
+```{r out.width = "50%"}
 validate$assessment_deviation = validate$price_closed - validate$assessment_value_town
 
 validate$predicted2 = predict(trial_lm34, validate)
@@ -325,22 +378,25 @@ Pomfret = subset(validate, city == "Pomfret")
 Woodstock = subset(validate, city == "Woodstock")
 Barnard = subset (validate, city == "Barnard")
 
-Pomfret$PredictionError = abs(Pomfret$assessment_deviation - Pomfret$predicted2)/Pomfret$assessment_deviation *100
+Pomfret$PredictionError = abs(Pomfret$assessment_deviation 
+        - Pomfret$predicted2)/Pomfret$assessment_deviation *100
 
-Woodstock$PredictionError = abs(Woodstock$assessment_deviation - Woodstock$predicted2)/Woodstock$assessment_deviation *100
+Woodstock$PredictionError = abs(Woodstock$assessment_deviation 
+        - Woodstock$predicted2)/Woodstock$assessment_deviation *100
 
-Barnard$PredictionError = abs(Barnard$assessment_deviation - Barnard$predicted2)/Barnard$assessment_deviation *100
+Barnard$PredictionError = abs(Barnard$assessment_deviation 
+        - Barnard$predicted2)/Barnard$assessment_deviation *100
 
-plot(density(na.exclude(Pomfret$PredictionError)), xlim=c(-10 , 125), ylim = c(0 , 0.03), col = "gray70" , main = "Assessment Deviation Percent Error by Town" , xlab ="Prediction Percent")
+plot(density(na.exclude(Pomfret$PredictionError)), xlim=c(-10 , 125), ylim = c(0 , 0.003), col = "gray70" , main = "Assessment Deviation Percent Error by Town" , xlab ="Prediction Percent Error")
 lines(density(na.exclude(Woodstock$PredictionError)) , col = "gray40")
 lines(density(na.exclude(Barnard$PredictionError)) , col = "gray8")
 legend("topright" , c("Pomfret","Woodstock", "Barnard"), fill=c("gray70", "gray40" , "gray8") )
 ```
-
+The assessment deviation prediction error varies greatly. This is because assessment deviation is highly volatile and difficult to predict compared to the closing price of a house. For example, if a house is worth $100,000 and the town predicts the assessment value to be $100,500, then the deviation is $500. If the predicted assessment deviation is $100, but the predicted closing price is $100,100. The percent error of the closing price is very small, but the percent error for the assessment deviation is 80%. So, while assessment deviation prediction can be used to predict the value of a house in tandem with the town assessment value variable, it is not a great estimator on its own.
 
 *Does the mean % error decrease by using assessment deviation instead?*
 
-The following code finds that our mean % error using the initial model was 23.19%. 
+The follow code finds that our mean % error using the initial model was 23.19%. 
 ```{r}
 PercentError = subset(validate, select = c("price_closed", "predicted"))
 Clean_PercentError = PercentError[complete.cases(PercentError),]
@@ -350,9 +406,26 @@ Clean_PercentError$abs_percent_error = abs(Clean_PercentError$percent_error)
 View(Clean_PercentError)
 mean(Clean_PercentError$abs_percent_error)
 ```
+```{r}
+PercentADError = subset(validate, select = c("assessment_deviation", "predicted2"))
+Clean_PercentADError = PercentADError[complete.cases(PercentADError),]
+View(Clean_PercentADError)
+Clean_PercentADError$percent_error = ((Clean_PercentADError$assessment_deviation - Clean_PercentADError$predicted2)/Clean_PercentADError$assessment_deviation)*100
+Clean_PercentADError$abs_percent_error = abs(Clean_PercentADError$percent_error)
+View(Clean_PercentADError)
+mean(Clean_PercentADError$abs_percent_error)
+```
+The mean percent error increases by using the assessment deviation instead of the initial closing price model. Because the new model does not use one of the most powerful explanatory variables - town assessment value - from the initial model, the predictive power of the new model is greatly decreased.
 
-
-
+```{r}
+PercentCPError = subset(validate, select = c("price_closed", "assessment_deviation", "predicted2", "assessment_value_town"))
+Clean_PercentCPError = PercentCPError[complete.cases(PercentCPError),]
+Clean_PercentCPError$percent_error = (((Clean_PercentCPError$price_closed - (Clean_PercentCPError$assessment_value_town + Clean_PercentCPError$predicted2))/Clean_PercentCPError$price_closed)*100)
+Clean_PercentCPError$abs_percent_error = abs(Clean_PercentCPError$percent_error)
+View(Clean_PercentCPError)
+mean(Clean_PercentCPError$abs_percent_error)
+```
+This is the mean percent error of closing price using the new model. We added our predicted assessment deviation to the town assessment value. The reason the percent error is lower is because it is less sensitive to small fluctuations. While it is substantially better than the percent error of the predicted assessment deviation, the original model predicting closing price is still a better predictor of closing price. 
 
 **10. How does the gross amount of property taxes affect the assessment value/closing price/assessment deviation for properties? Does the coefficient sign make sense?**
 
@@ -365,10 +438,9 @@ summary(taxtest2)
 
 train$assessment_deviation = train$price_closed - train$assessment_value_town
 taxtest3 = lm(data=train, assessment_deviation~tax_gross_amount)
-summary(taxtest)
+summary(taxtest3)
 ``` 
-
-We see from these regressions that tax is highly correlated with the assessment value of the town. The coefficient of the first regression means that for every unit increase in taxes, there is a $14,312.206 increase in the assessment value. This coefficient is significant and the regression has  an r-squared of .75, meaning the amount of tax accounts for 75% of the variation in assessment value. The second regression has a coefficient of 6.314e+01, meaning that for each unit increase in taxes there is a 6.314e+01 increase in closing price. The coefficient is significant and the r-squared of the regression is 0.7152, meaning that tax accounts for roughly 72% of variation in closing price. The coefficient sign for both these regressions make sense, because higher taxes generally means a more valuable property, leading to higher assesment values and closing prices. The third regression has a coefficient of 13.32, meaning that an increase in taxes leads to a $13.32 increase in deviation between closinng price and assessment value. This coefficient is significant, and the r-squared of this regression is .07099, meaning that the tax amount accounts for only 7% of the variation in deviation between assessment value and closing price. The sign and magnitude of this coefficient is intuitive, becauase the interpretation of the regression is that increasing taxes has a small but positive effect on the deviation between assessment value and closing price. This suggests that as taxes increase, the town tends to underestimate to a greater degree the value of houses. This may suggest that towns are hesistant to make further increases in assessments when subject to political pressure from taxpayers, because taxes tend to be based off of assessment values. However, this pressure is counteracted by the town's desire to raise assessment values and thereby raise taxes in order to raise funds. Therefore, the magnitude of the coefficient remains small and r-squared is only 7%.
+We see from these regressions that tax is highly correlated with the assessment value of the town. The coefficient of the first regression means that for every unit increase in taxes, there is a $14,312.206 increase in the assessment value. This coefficient is significant and the regression has  an r-squared of .75, meaning the amount of tax accounts for 75% of the variation in assessment value. The second regression has a coefficient of 63.14, meaning that for each unit increase in taxes there is a $63.14 increase in closing price. The coefficient is significant and the r-squared of the regression is 0.7152, meaning that tax accounts for roughly 72% of variation in closing price. The coefficient sign for both these regressions make sense, because higher taxes generally means a more valuable property, leading to higher assesment values and closing prices. The third regression has a coefficient of 13.32, meaning that an increase in taxes leads to a $13.32 increase in deviation between closinng price and assessment value. This coefficient is significant, and the r-squared of this regression is .07099, meaning that the tax amount accounts for only 7% of the variation in deviation between assessment value and closing price. The sign and magnitude of this coefficient is intuitive, becauase the interpretation of the regression is that increasing taxes has a small but positive effect on the deviation between assessment value and closing price. This suggests that as taxes increase, the town tends to underestimate to a greater degree the value of houses. This may suggest that towns are hesistant to make further increases in assessments when subject to political pressure from taxpayers, because taxes tend to be based off of assessment values. However, this pressure is counteracted by the town's desire to raise assessment values and thereby raise taxes in order to raise funds. Therefore, the magnitude of the coefficient remains small and r-squared is only 7%.
 
 **11. Finally, predict the closing price for the test data using the best model for closing price/assessment deviation. Create the 95% confidence interval for each of the test data properties. Assuming MLS receives a 8% commission on the sale of these properties, what is the predicted revenue for MLS and the associated 95% confidence interval?**
 
@@ -419,18 +491,8 @@ Total.Profit.Lower.Limit
 Total.Profit.Upper.Limit
 
 ```
-With 95% confidence, based on the test data sales, total profit on the test data lies between $438,650.5 and $999,555.3. We were able to find this by adding the predicted assessment deviation to the assessment value for each property. It is worth noting three of the properties in the data set were not assessed by the town, so using the assessment deviation approach, we were unable to produce a predicted closing price.  
+With 95% confidence, based on the test data sales, total profit on the test data lies between $438,650.5 and $999,555.3. We were able to find this by adding the predicted assessment deviation to the assessment value for each property. It is worth noting three of the properties in the data set were not assessed by the town, so using the assessment deviation approach, we were unable to produce a predicted closing price. 
 
+**12. Summarize your findings for MLS’ managers, and make recommendations for their improving their closing price prediction strategy.**
 
-**REGRESSIONS FROM SAUL**
-
-trial_lm34=lm(data=train,assessment_deviation~tax_gross_amount+sq_ft_tot_fn:factor(isPomfret)+tax_gross_amount:factor(isPomfret)+factor(isRiver):acres+tax_gross_amount:acres+isGarageDetached:garage_capacity+total_stories+short_sale+acres*sq_ft_tot_fn+rooms_total*total_stories)
-
-trial_lm35=lm(data=train,assessment_deviation~tax_gross_amount+sq_ft_tot_fn*factor(isPomfret)+tax_gross_amount:factor(isPomfret)+factor(isRiver):acres+tax_gross_amount:acres+isGarageDetached:garage_capacity+total_stories+short_sale+acres*sq_ft_tot_fn+rooms_total*total_stories)
-
-trial_lm36=lm(data=train,assessment_deviation~tax_gross_amount+sq_ft_tot_fn:factor(isPomfret)+tax_gross_amount:factor(isPomfret)+factor(isRiver):acres+tax_gross_amount:acres+isGarageDetached:garage_capacity+total_stories+short_sale+acres*sq_ft_tot_fn+rooms_total*total_stories+surveyed)
-
-
-**12. NEED TO UPDATE THIS FROM DELIVERABLE II!!!! Summarize your findings for MLS’ managers, and make recommendations for their improving their closing price prediction strategy.**
-
-The managers at MLS can take a few lessons from our model when trying to predict closing prices.  First, properties with higher taxes sell for higher closing prices. This is a fairly intuitive result, as the more valuable a property is, the government will want to tax it more. Next, houses in Pomfret are significantly more valuable as well. The coefficient for a house just being in Pomfret isn't significant, but the effect of gross taxes on closing prices is amplified. If there is a larger garage that can store more cars, the amount that the price increases per increase in amount taxed also increases. Finally, there is a significant bump in closing price if there is a river and the property has many acres. This makes sense, as longer rivers are more valuable than shorter rivers. Therefore, if MLS is looking to make larger commissions from selling more expensive houses, they should try to attract larger homes in Pomfret that will be taxed heavily, have large garages and long rivers in the backyards of these homes. Further, even with less expensive houses, it is beneficial be able to accruatly predict housing prices, have expidited sales for their customers, and translates to higher earnings. 
+The managers at MLS can take a few lessons from our model when trying to predict closing prices.  First, properties with higher taxes sell for higher closing prices. This is a fairly intuitive result, as the more valuable a property is, the government will want to tax it more. Next, houses in Pomfret are significantly more valuable as well. The coefficient for a house just being in Pomfret isn't significant, but the effect of gross taxes on closing prices is amplified. If there is a larger garage that can store more cars, the amount that the price increases per increase in amount taxed also increases. Finally, there is a significant bump in closing price if there is a river and the property has many acres. This makes sense, as longer rivers are more valuable than shorter rivers. Therefore, if MLS is looking to make larger commissions from selling more expensive houses, they should try to attract larger homes in Pomfret that will be taxed heavily, have large garages and long rivers in the backyards of these homes. Larger taxes mean higher closing prices because more valuable properties are taxed at a higher rate than less valuable properties. Further, even with less expensive houses, it is beneficial be able to accruatly predict housing prices, have expidited sales for their customers, and translates to higher earnings. Although we tested to see whether a model using assessment deviation rather than closing price as the dependent variable would better predict closing price, we found our initial model predicting closing price had greater predictive power. 
